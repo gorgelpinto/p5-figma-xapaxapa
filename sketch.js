@@ -1,7 +1,7 @@
 let layers = [];
 
 /* =========================
-   ESTADO EXTERNO
+   ESTADO CONTROLADO PELO FIGMA
 ========================= */
 
 function defaultState() {
@@ -38,6 +38,7 @@ function setup() {
   layers.push(new Xapa("x2"));
   layers.push(new Xapa("x3"));
 
+  console.log("Sketch iniciado");
   noLoop();
 }
 
@@ -78,7 +79,12 @@ window.addEventListener("message", (event) => {
   const data = event.data;
   if (!data) return;
 
+  console.log("Mensagem recebida:", data);
+
+  /* ---- Atualização de sliders ---- */
   if (data.type === "updateXapa") {
+
+    if (!externalControls[data.xapa]) return;
 
     externalControls[data.xapa] = {
       ...externalControls[data.xapa],
@@ -88,19 +94,25 @@ window.addEventListener("message", (event) => {
     redraw();
   }
 
+  /* ---- Upload de imagem ---- */
   if (data.type === "uploadImage") {
 
-    loadImage(data.imageData, (img) => {
+    const layer = layers.find(l => l.prefix === data.xapa);
+    if (!layer) return;
 
-      const layer = layers.find(l => l.prefix === data.xapa);
-
-      if (layer) {
+    loadImage(
+      data.imageData,
+      (img) => {
         layer.image = img;
+        console.log("Imagem atribuída a", data.xapa);
         redraw();
+      },
+      (err) => {
+        console.error("Erro ao carregar imagem:", err);
       }
-
-    });
+    );
   }
+
 });
 
 /* =========================
