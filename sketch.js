@@ -1,111 +1,18 @@
-let layers = [];
-let images = {};
-
-function preload() {
-  images[1] = loadImage("img1.png");
-  images[2] = loadImage("img2.png");
-}
-
-function setup() {
-  const container = document.getElementById("sketch-container");
-
-  const canvas = createCanvas(
-    container.offsetWidth,
-    container.offsetHeight
-  );
-
-  canvas.parent("sketch-container");
-
-  layers.push(new Layer(1, "l1"));
-  layers.push(new Layer(2, "l2"));
-
-  noLoop(); // só redesenha quando há alteração
-}
-
-function draw() {
-  background(255);
-
-  layers.forEach(layer => {
-    layer.update();
-    layer.display();
-  });
-}
-
-function windowResized() {
-  const container = document.getElementById("sketch-container");
-
-  resizeCanvas(
-    container.offsetWidth,
-    container.offsetHeight
-  );
-
-  redraw();
-}
-
-class Layer {
-  constructor(index, prefix) {
-    this.image = images[index];
-
-    // Checkbox ON/OFF
-    this.enabled = document.getElementById(prefix + "-enabled");
-
-    // Sliders
-    this.controls = {
-      transparency: document.getElementById(prefix + "-transparency"),
-      rotation: document.getElementById(prefix + "-rotation"),
-      spacing: document.getElementById(prefix + "-spacing"),
-      size: document.getElementById(prefix + "-size"),
-      x: document.getElementById(prefix + "-x"),
-      y: document.getElementById(prefix + "-y"),
-    };
-
-    // Redesenhar quando checkbox muda
-    this.enabled.addEventListener("change", () => redraw());
-
-    // Redesenhar quando qualquer slider muda
-    Object.values(this.controls).forEach(control => {
-      control.addEventListener("input", () => redraw());
-    });
-  }
-
-  update() {
-    // Estado ativo
-    this.isActive = this.enabled.checked;
-
-    // Ler valores (mesmo que esteja desligado, mantém coerência)
-    this.rotationAngle = radians(Number(this.controls.rotation.value));
-    this.spacing = Number(this.controls.spacing.value);
-    this.imageSize = Number(this.controls.size.value);
-    this.transparency = Number(this.controls.transparency.value);
-    this.horizontalOffset = Number(this.controls.x.value);
-    this.verticalOffset = Number(this.controls.y.value);
-  }
-
 display() {
   if (!this.isActive) return;
   if (this.spacing <= 0) return;
 
-  // Criar margem extra para permitir deslocamento
-  const extra = 4; // número extra de linhas/colunas para além do canvas
+  // Margem extra grande para evitar vazios
+  const margin = this.spacing * 10;
 
-  const rows = Math.ceil(height / this.spacing) + extra;
-  const cols = Math.ceil(width / this.spacing) + extra;
+  for (let x = -margin; x < width + margin; x += this.spacing) {
+    for (let y = -margin; y < height + margin; y += this.spacing) {
 
-  const xOffset =
-    (width - (cols - 1) * this.spacing) / 2 +
-    this.horizontalOffset;
-
-  const yOffset =
-    (height - (rows - 1) * this.spacing) / 2 +
-    this.verticalOffset;
-
-  for (let y = -extra; y < rows; y++) {
-    for (let x = -extra; x < cols; x++) {
       push();
 
       translate(
-        x * this.spacing + xOffset,
-        y * this.spacing + yOffset
+        x + this.horizontalOffset,
+        y + this.verticalOffset
       );
 
       rotate(this.rotationAngle);
