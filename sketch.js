@@ -16,11 +16,11 @@ function setup() {
 
   canvas.parent("sketch-container");
 
-  // Criar layers independentes
+  // Criar duas layers independentes
   layers.push(new Layer(1, "l1"));
   layers.push(new Layer(2, "l2"));
 
-  noLoop();
+  noLoop(); // só redesenha quando há alteração
 }
 
 function draw() {
@@ -43,7 +43,7 @@ function windowResized() {
 
 class Layer {
   constructor(index, prefix) {
-    this.images = [images[index]];
+    this.image = images[index];
 
     this.controls = {
       transparency: document.getElementById(prefix + "-transparency"),
@@ -54,7 +54,7 @@ class Layer {
       y: document.getElementById(prefix + "-y"),
     };
 
-    // Redesenha sempre que qualquer slider muda
+    // Redesenhar quando qualquer slider muda
     Object.values(this.controls).forEach(control => {
       control.addEventListener("input", () => redraw());
     });
@@ -92,7 +92,7 @@ class Layer {
         tint(255, this.transparency);
         imageMode(CENTER);
         image(
-          this.images[0],
+          this.image,
           0,
           0,
           this.imageSize,
