@@ -1,33 +1,50 @@
-<!DOCTYPE html>
-<html lang="pt">
-<head>
-  <meta charset="utf-8" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.js"></script>
-  <link rel="stylesheet" href="style.css">
-  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300;500&display=swap" rel="stylesheet">
-</head>
+<div id="controls">
 
-<body>
+  <!-- LAYER 1 -->
+  <div class="layer-controls">
+    <h3>INFERIOR</h3>
 
-  <!-- SKETCH -->
-  <div id="sketch-container"></div>
-
-  <!-- UI (fora do canvas) -->
-  <div id="controls">
     <label>Transparência</label>
-    <input type="range" id="transparency" min="0" max="255" value="255">
+    <input type="range" id="l1-transparency" min="0" max="255" value="255">
 
     <label>Rotação</label>
-    <input type="range" id="rotation" min="0" max="360" value="180">
+    <input type="range" id="l1-rotation" min="0" max="360" value="180">
 
     <label>Afastamento</label>
-    <input type="range" id="spacing" min="20" max="400" value="80">
+    <input type="range" id="l1-spacing" min="20" max="400" value="80">
 
     <label>Tamanho</label>
-    <input type="range" id="size" min="20" max="400" value="120">
+    <input type="range" id="l1-size" min="20" max="400" value="120">
+
+    <label>Horizontal</label>
+    <input type="range" id="l1-x" min="-300" max="300" value="0">
+
+    <label>Vertical</label>
+    <input type="range" id="l1-y" min="-300" max="300" value="0">
   </div>
 
-  <script src="sketch.js"></script>
 
-</body>
-</html>
+  <!-- LAYER 2 -->
+  <div class="layer-controls">
+    <h3>SUPERIOR</h3>
+
+    <label>Transparência</label>
+    <input type="range" id="l2-transparency" min="0" max="255" value="255">
+
+    <label>Rotação</label>
+    <input type="range" id="l2-rotation" min="0" max="360" value="180">
+
+    <label>Afastamento</label>
+    <input type="range" id="l2-spacing" min="20" max="400" value="80">
+
+    <label>Tamanho</label>
+    <input type="range" id="l2-size" min="20" max="400" value="120">
+
+    <label>Horizontal</label>
+    <input type="range" id="l2-x" min="-300" max="300" value="0">
+
+    <label>Vertical</label>
+    <input type="range" id="l2-y" min="-300" max="300" value="0">
+  </div>
+
+</div>
