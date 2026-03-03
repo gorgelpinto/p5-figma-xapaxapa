@@ -1,4 +1,5 @@
 let layers = [];
+let baseImages = {};
 
 /* =========================
    ESTADO CONTROLADO PELO FIGMA
@@ -23,6 +24,16 @@ let externalControls = {
 };
 
 /* =========================
+   PRELOAD IMAGENS BASE
+========================= */
+
+function preload() {
+  baseImages.x1 = loadImage("img1.png");
+  baseImages.x2 = loadImage("img2.png");
+  baseImages.x3 = loadImage("img3.png");
+}
+
+/* =========================
    SETUP
 ========================= */
 
@@ -34,11 +45,10 @@ function setup() {
     container.offsetHeight
   ).parent("sketch-container");
 
-  layers.push(new Xapa("x1"));
-  layers.push(new Xapa("x2"));
-  layers.push(new Xapa("x3"));
+  layers.push(new Xapa("x1", baseImages.x1));
+  layers.push(new Xapa("x2", baseImages.x2));
+  layers.push(new Xapa("x3", baseImages.x3));
 
-  console.log("Sketch iniciado");
   noLoop();
 }
 
@@ -79,9 +89,7 @@ window.addEventListener("message", (event) => {
   const data = event.data;
   if (!data) return;
 
-  console.log("Mensagem recebida:", data);
-
-  /* ---- Atualização de sliders ---- */
+  /* ---- Atualização sliders ---- */
   if (data.type === "updateXapa") {
 
     if (!externalControls[data.xapa]) return;
@@ -94,23 +102,16 @@ window.addEventListener("message", (event) => {
     redraw();
   }
 
-  /* ---- Upload de imagem ---- */
+  /* ---- Upload imagem ---- */
   if (data.type === "uploadImage") {
 
     const layer = layers.find(l => l.prefix === data.xapa);
     if (!layer) return;
 
-    loadImage(
-      data.imageData,
-      (img) => {
-        layer.image = img;
-        console.log("Imagem atribuída a", data.xapa);
-        redraw();
-      },
-      (err) => {
-        console.error("Erro ao carregar imagem:", err);
-      }
-    );
+    loadImage(data.imageData, (img) => {
+      layer.image = img; // substitui imagem base
+      redraw();
+    });
   }
 
 });
@@ -120,9 +121,9 @@ window.addEventListener("message", (event) => {
 ========================= */
 
 class Xapa {
-  constructor(prefix) {
+  constructor(prefix, initialImage) {
     this.prefix = prefix;
-    this.image = null;
+    this.image = initialImage || null;
   }
 
   update() {
