@@ -45,6 +45,10 @@ class Layer {
   constructor(index, prefix) {
     this.image = images[index];
 
+    // Checkbox ON/OFF
+    this.enabled = document.getElementById(prefix + "-enabled");
+
+    // Sliders
     this.controls = {
       transparency: document.getElementById(prefix + "-transparency"),
       rotation: document.getElementById(prefix + "-rotation"),
@@ -54,13 +58,19 @@ class Layer {
       y: document.getElementById(prefix + "-y"),
     };
 
-    // Redesenhar quando qualquer slider muda
+    // Redesenhar quando qualquer controlo muda
+    this.enabled.addEventListener("change", () => redraw());
+
     Object.values(this.controls).forEach(control => {
       control.addEventListener("input", () => redraw());
     });
   }
 
   update() {
+    this.isActive = this.enabled.checked;
+
+    if (!this.isActive) return;
+
     this.rotationAngle = radians(Number(this.controls.rotation.value));
     this.spacing = Number(this.controls.spacing.value);
     this.imageSize = Number(this.controls.size.value);
@@ -70,6 +80,7 @@ class Layer {
   }
 
   display() {
+    if (!this.isActive) return;
     if (this.spacing <= 0) return;
 
     const rows = Math.ceil(height / this.spacing);
