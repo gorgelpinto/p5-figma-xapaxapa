@@ -2,17 +2,19 @@ display() {
   if (!this.isActive) return;
   if (this.spacing <= 0) return;
 
-  // Margem extra grande para evitar vazios
-  const margin = this.spacing * 10;
+  // Offset modular (ancora a grelha)
+  const offsetX = this.horizontalOffset % this.spacing;
+  const offsetY = this.verticalOffset % this.spacing;
 
-  for (let x = -margin; x < width + margin; x += this.spacing) {
-    for (let y = -margin; y < height + margin; y += this.spacing) {
+  // Começa antes do canvas para garantir cobertura
+  for (let x = -this.spacing; x < width + this.spacing; x += this.spacing) {
+    for (let y = -this.spacing; y < height + this.spacing; y += this.spacing) {
 
       push();
 
       translate(
-        x + this.horizontalOffset,
-        y + this.verticalOffset
+        x + offsetX,
+        y + offsetY
       );
 
       rotate(this.rotationAngle);
