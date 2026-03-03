@@ -3,43 +3,23 @@
 <head>
   <meta charset="utf-8" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.js"></script>
-
   <style>
     html, body {
       margin: 0;
       padding: 0;
       overflow: hidden;
       background: white;
-      height: 100%;
+    }
+
+    #sketch-container {
       width: 100%;
-      font-family: sans-serif;
-    }
-
-    .upload-ui {
-      position: fixed;
-      top: 20px;
-      left: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      z-index: 10;
-    }
-
-    canvas {
-      display: block;
+      height: 100vh;
     }
   </style>
 </head>
 
 <body>
-
-  <div class="upload-ui">
-    <input type="file" id="upload-x1" accept="image/*">
-    <input type="file" id="upload-x2" accept="image/*">
-    <input type="file" id="upload-x3" accept="image/*">
-  </div>
-
-<script src="p5.min.js"></script>
-  
+  <div id="sketch-container"></div>
+  <script src="sketch.js"></script>
 </body>
 </html>
