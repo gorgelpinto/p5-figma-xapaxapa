@@ -1,6 +1,27 @@
 let layers = [];
 let images = {};
 
+let externalControls = {
+  l1: {
+    enabled: true,
+    rotation: 180,
+    spacing: 80,
+    size: 120,
+    transparency: 255,
+    x: 0,
+    y: 0
+  },
+  l2: {
+    enabled: true,
+    rotation: 180,
+    spacing: 80,
+    size: 120,
+    transparency: 255,
+    x: 0,
+    y: 0
+  }
+};
+
 function preload() {
   images[1] = loadImage("img1.png");
   images[2] = loadImage("img2.png");
@@ -42,37 +63,35 @@ function windowResized() {
   redraw();
 }
 
+/* 🔁 RECEBER DADOS DO FIGMA */
+window.addEventListener("message", (event) => {
+  const data = event.data;
+
+  if (data.type === "updateLayer") {
+    externalControls[data.layer] = {
+      ...externalControls[data.layer],
+      ...data.values
+    };
+    redraw();
+  }
+});
+
 class Layer {
   constructor(index, prefix) {
     this.image = images[index];
-
-    this.enabled = document.getElementById(prefix + "-enabled");
-
-    this.controls = {
-      transparency: document.getElementById(prefix + "-transparency"),
-      rotation: document.getElementById(prefix + "-rotation"),
-      spacing: document.getElementById(prefix + "-spacing"),
-      size: document.getElementById(prefix + "-size"),
-      x: document.getElementById(prefix + "-x"),
-      y: document.getElementById(prefix + "-y"),
-    };
-
-    this.enabled.addEventListener("change", () => redraw());
-
-    Object.values(this.controls).forEach(control => {
-      control.addEventListener("input", () => redraw());
-    });
+    this.prefix = prefix;
   }
 
   update() {
-    this.isActive = this.enabled.checked;
+    const c = externalControls[this.prefix];
 
-    this.rotationAngle = radians(Number(this.controls.rotation.value));
-    this.spacing = Number(this.controls.spacing.value);
-    this.imageSize = Number(this.controls.size.value);
-    this.transparency = Number(this.controls.transparency.value);
-    this.horizontalOffset = Number(this.controls.x.value);
-    this.verticalOffset = Number(this.controls.y.value);
+    this.isActive = c.enabled;
+    this.rotationAngle = radians(c.rotation);
+    this.spacing = c.spacing;
+    this.imageSize = c.size;
+    this.transparency = c.transparency;
+    this.horizontalOffset = c.x;
+    this.verticalOffset = c.y;
   }
 
   display() {
