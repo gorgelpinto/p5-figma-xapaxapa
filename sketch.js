@@ -1,5 +1,4 @@
 let layers = [];
-let images = {};
 
 /* =========================
    ESTADO EXTERNO
@@ -20,21 +19,8 @@ function defaultState() {
 let externalControls = {
   x1: defaultState(),
   x2: defaultState(),
-  x3: defaultState(),
-  l1: defaultState(),
-  l2: defaultState(),
-  l3: defaultState()
+  x3: defaultState()
 };
-
-/* =========================
-   PRELOAD
-========================= */
-
-function preload() {
-  images[1] = loadImage("img1.png", () => {}, () => {});
-  images[2] = loadImage("img2.png", () => {}, () => {});
-  images[3] = loadImage("img3.png", () => {}, () => {});
-}
 
 /* =========================
    SETUP
@@ -48,10 +34,9 @@ function setup() {
     container.offsetHeight
   ).parent("sketch-container");
 
-  // Criamos 3 layers mas só desenha se houver imagem
-  layers.push(new Layer(1, "x1"));
-  layers.push(new Layer(2, "x2"));
-  layers.push(new Layer(3, "x3"));
+  layers.push(new Xapa("x1"));
+  layers.push(new Xapa("x2"));
+  layers.push(new Xapa("x3"));
 
   noLoop();
 }
@@ -85,7 +70,7 @@ function windowResized() {
 }
 
 /* =========================
-   RECEBER DADOS DO FIGMA
+   RECEBER MENSAGENS DO FIGMA
 ========================= */
 
 window.addEventListener("message", (event) => {
@@ -93,55 +78,56 @@ window.addEventListener("message", (event) => {
   const data = event.data;
   if (!data) return;
 
-  console.log("Recebido:", data);
+  if (data.type === "updateXapa") {
 
-  if (data.type === "updateXapa" || data.type === "updateLayer") {
-
-    const key = data.xapa || data.layer;
-
-    if (!externalControls[key]) {
-      console.log("Key desconhecida:", key);
-      return;
-    }
-
-    externalControls[key] = {
-      ...externalControls[key],
+    externalControls[data.xapa] = {
+      ...externalControls[data.xapa],
       ...data.values
     };
 
     redraw();
   }
+
+  if (data.type === "uploadImage") {
+
+    loadImage(data.imageData, (img) => {
+
+      const layer = layers.find(l => l.prefix === data.xapa);
+
+      if (layer) {
+        layer.image = img;
+        redraw();
+      }
+
+    });
+  }
 });
 
 /* =========================
-   CLASSE
+   CLASSE XAPA
 ========================= */
 
-class Layer {
-  constructor(index, prefix) {
-    this.image = images[index];
+class Xapa {
+  constructor(prefix) {
     this.prefix = prefix;
+    this.image = null;
   }
 
   update() {
-    const c =
-      externalControls[this.prefix] ||
-      externalControls["l" + this.prefix.slice(1)] ||
-      defaultState();
+    const c = externalControls[this.prefix];
 
-    this.isActive = c.enabled;
-    this.rotationAngle = radians(c.rotation);
+    this.enabled = c.enabled;
+    this.rotation = radians(c.rotation);
     this.spacing = c.spacing;
-    this.imageSize = c.size;
+    this.size = c.size;
     this.transparency = c.transparency;
-    this.horizontalOffset = c.x;
-    this.verticalOffset = c.y;
+    this.offsetX = c.x;
+    this.offsetY = c.y;
   }
 
   display() {
-    if (!this.isActive) return;
+    if (!this.enabled) return;
     if (!this.image) return;
-    if (this.spacing <= 0) return;
 
     const buffer = this.spacing * 2;
 
@@ -149,25 +135,13 @@ class Layer {
       for (let y = -buffer; y < height + buffer; y += this.spacing) {
 
         push();
-
-        translate(
-          x + this.horizontalOffset,
-          y + this.verticalOffset
-        );
-
-        rotate(this.rotationAngle);
+        translate(x + this.offsetX, y + this.offsetY);
+        rotate(this.rotation);
         tint(255, this.transparency);
         imageMode(CENTER);
-
-        image(
-          this.image,
-          0,
-          0,
-          this.imageSize,
-          this.imageSize
-        );
-
+        image(this.image, 0, 0, this.size, this.size);
         pop();
+
       }
     }
   }
