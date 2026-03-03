@@ -10,12 +10,9 @@
       padding: 0;
       overflow: hidden;
       background: white;
-      font-family: sans-serif;
-    }
-
-    #sketch-container {
+      height: 100%;
       width: 100%;
-      height: 100vh;
+      font-family: sans-serif;
     }
 
     .upload-ui {
@@ -24,26 +21,27 @@
       left: 20px;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 8px;
       z-index: 10;
     }
 
     .upload-ui input {
       font-size: 12px;
     }
+
+    canvas {
+      display: block;
+    }
   </style>
 </head>
 
 <body>
 
-  <!-- Upload simples -->
   <div class="upload-ui">
     <input type="file" id="upload-x1" accept="image/*">
     <input type="file" id="upload-x2" accept="image/*">
     <input type="file" id="upload-x3" accept="image/*">
   </div>
-
-  <div id="sketch-container"></div>
 
   <script src="sketch.js"></script>
 
