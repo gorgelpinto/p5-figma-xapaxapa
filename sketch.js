@@ -2,8 +2,8 @@ let layers = [];
 let images = {};
 
 function preload() {
-  images[1] = loadImage('img1.png');
-  images[2] = loadImage('img2.png');
+  images[1] = loadImage("img1.png");
+  images[2] = loadImage("img2.png");
 }
 
 function setup() {
@@ -16,7 +16,6 @@ function setup() {
 
   canvas.parent("sketch-container");
 
-  // Criar duas layers independentes
   layers.push(new Layer(1, "l1"));
   layers.push(new Layer(2, "l2"));
 
@@ -34,10 +33,12 @@ function draw() {
 
 function windowResized() {
   const container = document.getElementById("sketch-container");
+
   resizeCanvas(
     container.offsetWidth,
     container.offsetHeight
   );
+
   redraw();
 }
 
@@ -58,19 +59,20 @@ class Layer {
       y: document.getElementById(prefix + "-y"),
     };
 
-    // Redesenhar quando qualquer controlo muda
+    // Redesenhar quando checkbox muda
     this.enabled.addEventListener("change", () => redraw());
 
+    // Redesenhar quando qualquer slider muda
     Object.values(this.controls).forEach(control => {
       control.addEventListener("input", () => redraw());
     });
   }
 
   update() {
+    // Estado ativo
     this.isActive = this.enabled.checked;
 
-    if (!this.isActive) return;
-
+    // Ler valores (mesmo que esteja desligado, mantém coerência)
     this.rotationAngle = radians(Number(this.controls.rotation.value));
     this.spacing = Number(this.controls.spacing.value);
     this.imageSize = Number(this.controls.size.value);
@@ -80,7 +82,9 @@ class Layer {
   }
 
   display() {
+    // Se layer desligada → não desenha
     if (!this.isActive) return;
+
     if (this.spacing <= 0) return;
 
     const rows = Math.ceil(height / this.spacing);
@@ -95,13 +99,16 @@ class Layer {
     for (let y = 0; y < rows; y++) {
       for (let x = 0; x < cols; x++) {
         push();
+
         translate(
           x * this.spacing + xOffset,
           y * this.spacing + yOffset
         );
+
         rotate(this.rotationAngle);
         tint(255, this.transparency);
         imageMode(CENTER);
+
         image(
           this.image,
           0,
@@ -109,6 +116,7 @@ class Layer {
           this.imageSize,
           this.imageSize
         );
+
         pop();
       }
     }
