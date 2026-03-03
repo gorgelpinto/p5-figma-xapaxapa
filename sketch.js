@@ -1,15 +1,20 @@
-let xapas = [];
+// ===============================
+// CONFIGURAÇÃO GLOBAL
+// ===============================
 
 const MAX_FILE_SIZE_MB = 5;
 const MAX_FILE_SIZE = MAX_FILE_SIZE_MB * 1024 * 1024;
 
+let xapas = [];
+
+// Estado externo (compatível com Figma postMessage)
 let externalControls = {
-  x1: defaultXapaState(),
-  x2: defaultXapaState(),
-  x3: defaultXapaState()
+  x1: createDefaultState(),
+  x2: createDefaultState(),
+  x3: createDefaultState()
 };
 
-function defaultXapaState() {
+function createDefaultState() {
   return {
     enabled: true,
     rotation: 180,
@@ -21,21 +26,19 @@ function defaultXapaState() {
   };
 }
 
+// ===============================
+// P5 SETUP
+// ===============================
+
 function setup() {
-  const container = document.getElementById("sketch-container");
-
-  const canvas = createCanvas(
-    container.offsetWidth,
-    container.offsetHeight
-  );
-
-  canvas.parent("sketch-container");
+  createCanvas(window.innerWidth, window.innerHeight);
+  noLoop();
 
   xapas.push(new Xapa("x1"));
   xapas.push(new Xapa("x2"));
   xapas.push(new Xapa("x3"));
 
-  // Upload listeners
+  // Upload handlers
   document.getElementById("upload-x1")
     .addEventListener("change", (e) => handleUpload(e, 0));
 
@@ -44,29 +47,25 @@ function setup() {
 
   document.getElementById("upload-x3")
     .addEventListener("change", (e) => handleUpload(e, 2));
-
-  noLoop();
 }
 
 function draw() {
   background(255);
 
-  xapas.forEach(xapa => {
-    xapa.update();
-    xapa.display();
+  xapas.forEach(x => {
+    x.update();
+    x.display();
   });
 }
 
 function windowResized() {
-  const container = document.getElementById("sketch-container");
-
-  resizeCanvas(
-    container.offsetWidth,
-    container.offsetHeight
-  );
-
+  resizeCanvas(window.innerWidth, window.innerHeight);
   redraw();
 }
+
+// ===============================
+// UPLOAD
+// ===============================
 
 function handleUpload(event, index) {
   const file = event.target.files[0];
@@ -96,11 +95,14 @@ function handleUpload(event, index) {
   reader.readAsDataURL(file);
 }
 
-/* Comunicação externa (Figma) */
+// ===============================
+// COMUNICAÇÃO COM FIGMA
+// ===============================
+
 window.addEventListener("message", (event) => {
   const data = event.data;
 
-  if (data.type === "updateXapa") {
+  if (data?.type === "updateXapa") {
     externalControls[data.xapa] = {
       ...externalControls[data.xapa],
       ...data.values
@@ -108,6 +110,10 @@ window.addEventListener("message", (event) => {
     redraw();
   }
 });
+
+// ===============================
+// CLASSE XAPA
+// ===============================
 
 class Xapa {
   constructor(prefix) {
@@ -137,25 +143,13 @@ class Xapa {
       for (let y = -buffer; y < height + buffer; y += this.spacing) {
 
         push();
-
-        translate(
-          x + this.offsetX,
-          y + this.offsetY
-        );
-
+        translate(x + this.offsetX, y + this.offsetY);
         rotate(this.rotation);
         tint(255, this.transparency);
         imageMode(CENTER);
-
-        image(
-          this.image,
-          0,
-          0,
-          this.size,
-          this.size
-        );
-
+        image(this.image, 0, 0, this.size, this.size);
         pop();
+
       }
     }
   }
