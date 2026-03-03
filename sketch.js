@@ -1,15 +1,9 @@
 let layers = [];
 let images = {};
 
-/* ==============================
-   ESTADO CONTROLADO PELO FIGMA
-================================ */
-
-let externalControls = {
-  x1: defaultState(),
-  x2: defaultState(),
-  x3: defaultState()
-};
+/* =========================
+   ESTADO EXTERNO
+========================= */
 
 function defaultState() {
   return {
@@ -23,30 +17,38 @@ function defaultState() {
   };
 }
 
-/* ==============================
-   PRELOAD IMAGENS
-================================ */
+let externalControls = {
+  x1: defaultState(),
+  x2: defaultState(),
+  x3: defaultState(),
+  l1: defaultState(),
+  l2: defaultState(),
+  l3: defaultState()
+};
+
+/* =========================
+   PRELOAD
+========================= */
 
 function preload() {
-  images[1] = loadImage("img1.png");
-  images[2] = loadImage("img2.png");
-  images[3] = loadImage("img3.png"); // certifica-te que existe
+  images[1] = loadImage("img1.png", () => {}, () => {});
+  images[2] = loadImage("img2.png", () => {}, () => {});
+  images[3] = loadImage("img3.png", () => {}, () => {});
 }
 
-/* ==============================
+/* =========================
    SETUP
-================================ */
+========================= */
 
 function setup() {
   const container = document.getElementById("sketch-container");
 
-  const canvas = createCanvas(
+  createCanvas(
     container.offsetWidth,
     container.offsetHeight
-  );
+  ).parent("sketch-container");
 
-  canvas.parent("sketch-container");
-
+  // Criamos 3 layers mas só desenha se houver imagem
   layers.push(new Layer(1, "x1"));
   layers.push(new Layer(2, "x2"));
   layers.push(new Layer(3, "x3"));
@@ -54,9 +56,9 @@ function setup() {
   noLoop();
 }
 
-/* ==============================
+/* =========================
    DRAW
-================================ */
+========================= */
 
 function draw() {
   background(255);
@@ -67,9 +69,9 @@ function draw() {
   });
 }
 
-/* ==============================
+/* =========================
    RESPONSIVO
-================================ */
+========================= */
 
 function windowResized() {
   const container = document.getElementById("sketch-container");
@@ -82,16 +84,28 @@ function windowResized() {
   redraw();
 }
 
-/* ==============================
+/* =========================
    RECEBER DADOS DO FIGMA
-================================ */
+========================= */
 
 window.addEventListener("message", (event) => {
-  const data = event.data;
 
-  if (data?.type === "updateXapa") {
-    externalControls[data.xapa] = {
-      ...externalControls[data.xapa],
+  const data = event.data;
+  if (!data) return;
+
+  console.log("Recebido:", data);
+
+  if (data.type === "updateXapa" || data.type === "updateLayer") {
+
+    const key = data.xapa || data.layer;
+
+    if (!externalControls[key]) {
+      console.log("Key desconhecida:", key);
+      return;
+    }
+
+    externalControls[key] = {
+      ...externalControls[key],
       ...data.values
     };
 
@@ -99,9 +113,9 @@ window.addEventListener("message", (event) => {
   }
 });
 
-/* ==============================
-   CLASSE XAPA
-================================ */
+/* =========================
+   CLASSE
+========================= */
 
 class Layer {
   constructor(index, prefix) {
@@ -110,7 +124,10 @@ class Layer {
   }
 
   update() {
-    const c = externalControls[this.prefix];
+    const c =
+      externalControls[this.prefix] ||
+      externalControls["l" + this.prefix.slice(1)] ||
+      defaultState();
 
     this.isActive = c.enabled;
     this.rotationAngle = radians(c.rotation);
