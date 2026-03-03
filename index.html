@@ -1,17 +1,33 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/addons/p5.sound.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="style.css">
-    <meta charset="utf-8" />
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">    
+<html lang="pt">
+<head>
+  <meta charset="utf-8" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.js"></script>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300;500&display=swap" rel="stylesheet">
+</head>
 
-  </head>
-  <body>
+<body>
+
+  <!-- SKETCH -->
   <div id="sketch-container"></div>
+
+  <!-- UI (fora do canvas) -->
+  <div id="controls">
+    <label>Transparência</label>
+    <input type="range" id="transparency" min="0" max="255" value="255">
+
+    <label>Rotação</label>
+    <input type="range" id="rotation" min="0" max="360" value="180">
+
+    <label>Afastamento</label>
+    <input type="range" id="spacing" min="20" max="400" value="80">
+
+    <label>Tamanho</label>
+    <input type="range" id="size" min="20" max="400" value="120">
+  </div>
+
   <script src="sketch.js"></script>
+
 </body>
 </html>
