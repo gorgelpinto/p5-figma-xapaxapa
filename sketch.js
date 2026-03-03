@@ -81,44 +81,46 @@ class Layer {
     this.verticalOffset = Number(this.controls.y.value);
   }
 
-  display() {
-    // Se layer desligada → não desenha
-    if (!this.isActive) return;
+display() {
+  if (!this.isActive) return;
+  if (this.spacing <= 0) return;
 
-    if (this.spacing <= 0) return;
+  // Criar margem extra para permitir deslocamento
+  const extra = 4; // número extra de linhas/colunas para além do canvas
 
-    const rows = Math.ceil(height / this.spacing);
-    const cols = Math.ceil(width / this.spacing);
+  const rows = Math.ceil(height / this.spacing) + extra;
+  const cols = Math.ceil(width / this.spacing) + extra;
 
-    const xOffset =
-      (width - (cols - 1) * this.spacing) / 2 + this.horizontalOffset;
+  const xOffset =
+    (width - (cols - 1) * this.spacing) / 2 +
+    this.horizontalOffset;
 
-    const yOffset =
-      (height - (rows - 1) * this.spacing) / 2 + this.verticalOffset;
+  const yOffset =
+    (height - (rows - 1) * this.spacing) / 2 +
+    this.verticalOffset;
 
-    for (let y = 0; y < rows; y++) {
-      for (let x = 0; x < cols; x++) {
-        push();
+  for (let y = -extra; y < rows; y++) {
+    for (let x = -extra; x < cols; x++) {
+      push();
 
-        translate(
-          x * this.spacing + xOffset,
-          y * this.spacing + yOffset
-        );
+      translate(
+        x * this.spacing + xOffset,
+        y * this.spacing + yOffset
+      );
 
-        rotate(this.rotationAngle);
-        tint(255, this.transparency);
-        imageMode(CENTER);
+      rotate(this.rotationAngle);
+      tint(255, this.transparency);
+      imageMode(CENTER);
 
-        image(
-          this.image,
-          0,
-          0,
-          this.imageSize,
-          this.imageSize
-        );
+      image(
+        this.image,
+        0,
+        0,
+        this.imageSize,
+        this.imageSize
+      );
 
-        pop();
-      }
+      pop();
     }
   }
 }
