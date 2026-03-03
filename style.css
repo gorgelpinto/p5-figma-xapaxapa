@@ -1,10 +1,30 @@
 html, body {
   margin: 0;
   padding: 0;
-  height: 100%;
+  font-family: 'Roboto Mono', monospace;
+  background: white;
 }
 
 #sketch-container {
   width: 100%;
-  height: 100%;
+  height: 70vh;
+  overflow: hidden;
+}
+
+#controls {
+  padding: 40px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+  justify-content: center;
+}
+
+#controls label {
+  display: block;
+  font-size: 14px;
+  margin-bottom: 6px;
+}
+
+#controls input {
+  width: 200px;
 }
