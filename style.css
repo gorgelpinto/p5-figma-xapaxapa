@@ -1,30 +1,23 @@
-html, body {
-  margin: 0;
-  padding: 0;
-  font-family: 'Roboto Mono', monospace;
-  background: white;
-}
-
-#sketch-container {
-  width: 100%;
-  height: 70vh;
-  overflow: hidden;
-}
-
 #controls {
   padding: 40px;
   display: flex;
   flex-wrap: wrap;
-  gap: 30px;
+  gap: 60px;
   justify-content: center;
 }
 
-#controls label {
-  display: block;
-  font-size: 14px;
-  margin-bottom: 6px;
+.layer-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 220px;
 }
 
-#controls input {
+.layer-controls h3 {
+  margin-bottom: 10px;
+  font-weight: 500;
+}
+
+.layer-controls input {
   width: 200px;
 }
