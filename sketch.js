@@ -1,31 +1,41 @@
 let layers = [];
 let images = {};
 
+/* ==============================
+   ESTADO CONTROLADO PELO FIGMA
+================================ */
+
 let externalControls = {
-  l1: {
-    enabled: true,
-    rotation: 180,
-    spacing: 80,
-    size: 120,
-    transparency: 255,
-    x: 0,
-    y: 0
-  },
-  l2: {
-    enabled: true,
-    rotation: 180,
-    spacing: 80,
-    size: 120,
-    transparency: 255,
-    x: 0,
-    y: 0
-  }
+  x1: defaultState(),
+  x2: defaultState(),
+  x3: defaultState()
 };
+
+function defaultState() {
+  return {
+    enabled: true,
+    rotation: 180,
+    spacing: 80,
+    size: 120,
+    transparency: 255,
+    x: 0,
+    y: 0
+  };
+}
+
+/* ==============================
+   PRELOAD IMAGENS
+================================ */
 
 function preload() {
   images[1] = loadImage("img1.png");
   images[2] = loadImage("img2.png");
+  images[3] = loadImage("img3.png"); // certifica-te que existe
 }
+
+/* ==============================
+   SETUP
+================================ */
 
 function setup() {
   const container = document.getElementById("sketch-container");
@@ -37,11 +47,16 @@ function setup() {
 
   canvas.parent("sketch-container");
 
-  layers.push(new Layer(1, "l1"));
-  layers.push(new Layer(2, "l2"));
+  layers.push(new Layer(1, "x1"));
+  layers.push(new Layer(2, "x2"));
+  layers.push(new Layer(3, "x3"));
 
   noLoop();
 }
+
+/* ==============================
+   DRAW
+================================ */
 
 function draw() {
   background(255);
@@ -51,6 +66,10 @@ function draw() {
     layer.display();
   });
 }
+
+/* ==============================
+   RESPONSIVO
+================================ */
 
 function windowResized() {
   const container = document.getElementById("sketch-container");
@@ -63,18 +82,26 @@ function windowResized() {
   redraw();
 }
 
-/* 🔁 RECEBER DADOS DO FIGMA */
+/* ==============================
+   RECEBER DADOS DO FIGMA
+================================ */
+
 window.addEventListener("message", (event) => {
   const data = event.data;
 
-  if (data.type === "updateLayer") {
-    externalControls[data.layer] = {
-      ...externalControls[data.layer],
+  if (data?.type === "updateXapa") {
+    externalControls[data.xapa] = {
+      ...externalControls[data.xapa],
       ...data.values
     };
+
     redraw();
   }
 });
+
+/* ==============================
+   CLASSE XAPA
+================================ */
 
 class Layer {
   constructor(index, prefix) {
@@ -96,6 +123,7 @@ class Layer {
 
   display() {
     if (!this.isActive) return;
+    if (!this.image) return;
     if (this.spacing <= 0) return;
 
     const buffer = this.spacing * 2;
