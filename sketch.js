@@ -1,9 +1,4 @@
 let layers = [];
-let baseImages = {};
-
-/* =========================
-   ESTADO CONTROLADO PELO FIGMA
-========================= */
 
 function defaultState() {
   return {
@@ -23,20 +18,6 @@ let externalControls = {
   x3: defaultState()
 };
 
-/* =========================
-   PRELOAD IMAGENS BASE
-========================= */
-
-function preload() {
-  baseImages.x1 = loadImage("img1.png");
-  baseImages.x2 = loadImage("img2.png");
-  baseImages.x3 = loadImage("img3.png");
-}
-
-/* =========================
-   SETUP
-========================= */
-
 function setup() {
   const container = document.getElementById("sketch-container");
 
@@ -45,16 +26,29 @@ function setup() {
     container.offsetHeight
   ).parent("sketch-container");
 
-  layers.push(new Xapa("x1", baseImages.x1));
-  layers.push(new Xapa("x2", baseImages.x2));
-  layers.push(new Xapa("x3", baseImages.x3));
+  // Criamos layers vazias primeiro
+  layers.push(new Xapa("x1"));
+  layers.push(new Xapa("x2"));
+  layers.push(new Xapa("x3"));
+
+  // Agora carregamos imagens base
+  loadImage("img1.png", img => {
+    layers[0].image = img;
+    redraw();
+  });
+
+  loadImage("img2.png", img => {
+    layers[1].image = img;
+    redraw();
+  });
+
+  loadImage("img3.png", img => {
+    layers[2].image = img;
+    redraw();
+  });
 
   noLoop();
 }
-
-/* =========================
-   DRAW
-========================= */
 
 function draw() {
   background(255);
@@ -64,10 +58,6 @@ function draw() {
     layer.display();
   });
 }
-
-/* =========================
-   RESPONSIVO
-========================= */
 
 function windowResized() {
   const container = document.getElementById("sketch-container");
@@ -80,19 +70,11 @@ function windowResized() {
   redraw();
 }
 
-/* =========================
-   RECEBER MENSAGENS DO FIGMA
-========================= */
-
 window.addEventListener("message", (event) => {
-
   const data = event.data;
   if (!data) return;
 
-  /* ---- Atualização sliders ---- */
   if (data.type === "updateXapa") {
-
-    if (!externalControls[data.xapa]) return;
 
     externalControls[data.xapa] = {
       ...externalControls[data.xapa],
@@ -102,28 +84,22 @@ window.addEventListener("message", (event) => {
     redraw();
   }
 
-  /* ---- Upload imagem ---- */
   if (data.type === "uploadImage") {
 
     const layer = layers.find(l => l.prefix === data.xapa);
     if (!layer) return;
 
     loadImage(data.imageData, (img) => {
-      layer.image = img; // substitui imagem base
+      layer.image = img;
       redraw();
     });
   }
-
 });
 
-/* =========================
-   CLASSE XAPA
-========================= */
-
 class Xapa {
-  constructor(prefix, initialImage) {
+  constructor(prefix) {
     this.prefix = prefix;
-    this.image = initialImage || null;
+    this.image = null;
   }
 
   update() {
