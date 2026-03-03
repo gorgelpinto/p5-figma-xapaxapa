@@ -78,9 +78,3 @@ html, body {
     width: 100%;
   }
 }
-
-.layer-controls h3 {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
