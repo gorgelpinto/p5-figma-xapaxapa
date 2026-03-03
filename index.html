@@ -1,50 +1,128 @@
-<div id="controls">
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="utf-8" />
 
-  <!-- LAYER 1 -->
-  <div class="layer-controls">
-    <h3>INFERIOR</h3>
+  <!-- p5 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.js"></script>
 
-    <label>Transparência</label>
-    <input type="range" id="l1-transparency" min="0" max="255" value="255">
+  <!-- Fonte -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300;500&display=swap" rel="stylesheet">
 
-    <label>Rotação</label>
-    <input type="range" id="l1-rotation" min="0" max="360" value="180">
+  <!-- CSS -->
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Roboto Mono', monospace;
+      background: white;
+    }
 
-    <label>Afastamento</label>
-    <input type="range" id="l1-spacing" min="20" max="400" value="80">
+    #sketch-container {
+      width: 100%;
+      height: 70vh;
+      overflow: hidden;
+    }
 
-    <label>Tamanho</label>
-    <input type="range" id="l1-size" min="20" max="400" value="120">
+    #controls {
+      padding: 50px 40px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 80px;
+      justify-content: center;
+    }
 
-    <label>Horizontal</label>
-    <input type="range" id="l1-x" min="-300" max="300" value="0">
+    .layer-controls {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-width: 240px;
+    }
 
-    <label>Vertical</label>
-    <input type="range" id="l1-y" min="-300" max="300" value="0">
+    .layer-controls h3 {
+      margin-bottom: 10px;
+      font-weight: 500;
+      letter-spacing: 1px;
+    }
+
+    .layer-controls label {
+      font-size: 13px;
+      margin-top: 8px;
+    }
+
+    .layer-controls input[type="range"] {
+      width: 220px;
+    }
+
+    @media (max-width: 768px) {
+      #controls {
+        flex-direction: column;
+        align-items: center;
+        gap: 50px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- SKETCH -->
+  <div id="sketch-container"></div>
+
+  <!-- CONTROLS -->
+  <div id="controls">
+
+    <!-- LAYER 1 -->
+    <div class="layer-controls">
+      <h3>INFERIOR</h3>
+
+      <label>Transparência</label>
+      <input type="range" id="l1-transparency" min="0" max="255" value="255">
+
+      <label>Rotação</label>
+      <input type="range" id="l1-rotation" min="0" max="360" value="180">
+
+      <label>Afastamento</label>
+      <input type="range" id="l1-spacing" min="20" max="400" value="80">
+
+      <label>Tamanho</label>
+      <input type="range" id="l1-size" min="20" max="400" value="120">
+
+      <label>Horizontal</label>
+      <input type="range" id="l1-x" min="-300" max="300" value="0">
+
+      <label>Vertical</label>
+      <input type="range" id="l1-y" min="-300" max="300" value="0">
+    </div>
+
+
+    <!-- LAYER 2 -->
+    <div class="layer-controls">
+      <h3>SUPERIOR</h3>
+
+      <label>Transparência</label>
+      <input type="range" id="l2-transparency" min="0" max="255" value="255">
+
+      <label>Rotação</label>
+      <input type="range" id="l2-rotation" min="0" max="360" value="180">
+
+      <label>Afastamento</label>
+      <input type="range" id="l2-spacing" min="20" max="400" value="80">
+
+      <label>Tamanho</label>
+      <input type="range" id="l2-size" min="20" max="400" value="120">
+
+      <label>Horizontal</label>
+      <input type="range" id="l2-x" min="-300" max="300" value="0">
+
+      <label>Vertical</label>
+      <input type="range" id="l2-y" min="-300" max="300" value="0">
+    </div>
+
   </div>
 
+  <!-- SKETCH -->
+  <script src="sketch.js"></script>
 
-  <!-- LAYER 2 -->
-  <div class="layer-controls">
-    <h3>SUPERIOR</h3>
-
-    <label>Transparência</label>
-    <input type="range" id="l2-transparency" min="0" max="255" value="255">
-
-    <label>Rotação</label>
-    <input type="range" id="l2-rotation" min="0" max="360" value="180">
-
-    <label>Afastamento</label>
-    <input type="range" id="l2-spacing" min="20" max="400" value="80">
-
-    <label>Tamanho</label>
-    <input type="range" id="l2-size" min="20" max="400" value="120">
-
-    <label>Horizontal</label>
-    <input type="range" id="l2-x" min="-300" max="300" value="0">
-
-    <label>Vertical</label>
-    <input type="range" id="l2-y" min="-300" max="300" value="0">
-  </div>
-
-</div>
+</body>
+</html>
