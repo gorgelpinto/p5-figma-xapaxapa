@@ -27,7 +27,7 @@ x3:{
 enabled:true,
 rotation:0,
 spacing:300,
-size:750,
+size:400,
 transparency:255,
 x:20,
 y:60
