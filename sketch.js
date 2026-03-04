@@ -36,7 +36,6 @@ y:60
 };
 
 
-/* ---------- PRELOAD IMAGES ---------- */
 
 function preload(){
 
@@ -47,7 +46,6 @@ images[3] = loadImage("img2.png");
 }
 
 
-/* ---------- SETUP ---------- */
 
 function setup(){
 
@@ -69,7 +67,6 @@ noLoop();
 }
 
 
-/* ---------- DRAW ---------- */
 
 function draw(){
 
@@ -83,7 +80,6 @@ layer.display();
 }
 
 
-/* ---------- RESIZE ---------- */
 
 function windowResized(){
 
@@ -99,11 +95,14 @@ redraw();
 }
 
 
-/* ---------- RECEIVE DATA FROM FIGMA ---------- */
+
+/* ---------- MESSAGE LISTENER ---------- */
 
 window.addEventListener("message",(event)=>{
 
 const data = event.data;
+
+
 
 if(data.type==="updateXapa"){
 
@@ -117,12 +116,15 @@ redraw();
 }
 
 
+
 if(data.type==="uploadImage"){
 
 loadImage(data.imageData,img=>{
 
-const index = data.xapa==="x1" ? 0 :
-data.xapa==="x2" ? 1 : 2;
+const index =
+data.xapa==="x1" ? 0 :
+data.xapa==="x2" ? 1 :
+2;
 
 layers[index].image = img;
 
@@ -133,22 +135,25 @@ redraw();
 }
 
 
+
 if(data.type==="setOrder"){
 
-const newLayers = [];
+const newLayers=[];
 
 data.order.forEach(key=>{
 
 const layer = layers.find(l=>l.prefix===key);
+
 if(layer) newLayers.push(layer);
 
 });
 
-layers = newLayers;
+layers=newLayers;
 
 redraw();
 
 }
+
 
 
 if(data.type==="exportPNG"){
@@ -160,7 +165,8 @@ exportPNG(data.size);
 });
 
 
-/* ---------- EXPORT IMAGE ---------- */
+
+/* ---------- EXPORT ---------- */
 
 function exportPNG(size){
 
@@ -178,6 +184,7 @@ save(g,"xapa.png");
 }
 
 
+
 /* ---------- LAYER CLASS ---------- */
 
 class Layer{
@@ -188,6 +195,8 @@ this.image = images[index];
 this.prefix = prefix;
 
 }
+
+
 
 update(){
 
@@ -202,6 +211,8 @@ this.horizontalOffset = c.x;
 this.verticalOffset = c.y;
 
 }
+
+
 
 display(target){
 
