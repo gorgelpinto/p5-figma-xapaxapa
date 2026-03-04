@@ -1,27 +1,27 @@
 let layers = [];
 let baseImages = {};
 
-function defaultState(){
-  return{
-    enabled:true,
-    rotation:180,
-    spacing:80,
-    size:120,
-    transparency:255,
-    x:0,
-    y:0
+function defaultState() {
+  return {
+    enabled: true,
+    rotation: 180,
+    spacing: 80,
+    size: 120,
+    transparency: 255,
+    x: 0,
+    y: 0
   };
 }
 
-let externalControls={
-  x1:defaultState(),
-  x2:defaultState(),
-  x3:defaultState()
+let externalControls = {
+  x1: defaultState(),
+  x2: defaultState(),
+  x3: defaultState()
 };
 
-/* ---------------- PRELOAD ---------------- */
+/* ---------- PRELOAD ---------- */
 
-function preload(){
+function preload() {
 
   baseImages.x1 = loadImage("img1.png");
   baseImages.x2 = loadImage("img2.png");
@@ -29,41 +29,41 @@ function preload(){
 
 }
 
-/* ---------------- SETUP ---------------- */
+/* ---------- SETUP ---------- */
 
-function setup(){
+function setup() {
 
-  const container=document.getElementById("sketch-container");
+  const container = document.getElementById("sketch-container");
 
   createCanvas(
     container.offsetWidth,
     container.offsetHeight
   ).parent("sketch-container");
 
-  layers.push(new Xapa("x1",baseImages.x1));
-  layers.push(new Xapa("x2",baseImages.x2));
-  layers.push(new Xapa("x3",baseImages.x3));
+  layers.push(new Xapa("x1", baseImages.x1));
+  layers.push(new Xapa("x2", baseImages.x2));
+  layers.push(new Xapa("x3", baseImages.x3));
 
 }
 
-/* ---------------- DRAW ---------------- */
+/* ---------- DRAW ---------- */
 
-function draw(){
+function draw() {
 
   background(255);
 
-  layers.forEach(layer=>{
+  layers.forEach(layer => {
     layer.update();
     layer.display();
   });
 
 }
 
-/* ---------------- RESIZE ---------------- */
+/* ---------- RESIZE ---------- */
 
-function windowResized(){
+function windowResized() {
 
-  const container=document.getElementById("sketch-container");
+  const container = document.getElementById("sketch-container");
 
   resizeCanvas(
     container.offsetWidth,
@@ -72,18 +72,18 @@ function windowResized(){
 
 }
 
-/* ---------------- MESSAGE LISTENER ---------------- */
+/* ---------- MESSAGES ---------- */
 
-window.addEventListener("message",(event)=>{
+window.addEventListener("message", (event) => {
 
-  const data=event.data;
-  if(!data) return;
+  const data = event.data;
+  if (!data) return;
 
   /* sliders */
 
-  if(data.type==="updateXapa"){
+  if (data.type === "updateXapa") {
 
-    externalControls[data.xapa]={
+    externalControls[data.xapa] = {
       ...externalControls[data.xapa],
       ...data.values
     };
@@ -92,100 +92,139 @@ window.addEventListener("message",(event)=>{
 
   /* upload imagem */
 
-  if(data.type==="uploadImage"){
+  if (data.type === "uploadImage") {
 
-    const layer=layers.find(l=>l.prefix===data.xapa);
-    if(!layer) return;
+    const layer = layers.find(l => l.prefix === data.xapa);
+    if (!layer) return;
 
-    loadImage(data.imageData,img=>{
-      layer.image=img;
+    loadImage(data.imageData, img => {
+      layer.image = img;
     });
 
   }
 
-  /* alterar ordem */
+  /* ordem */
 
-  if(data.type==="setOrder"){
+  if (data.type === "setOrder") {
 
-    const order=data.order;
+    const order = data.order;
 
-    layers.sort((a,b)=>{
-      return order.indexOf(a.prefix)-order.indexOf(b.prefix);
+    layers.sort((a, b) => {
+      return order.indexOf(a.prefix) - order.indexOf(b.prefix);
     });
 
   }
 
-  /* export PNG */
+  /* EXPORT PNG */
 
-  if(data.type==="exportPNG"){
+  if (data.type === "exportPNG") {
 
-    saveCanvas("xapa-composition","png");
+    const exportSize = data.size || 4000;
 
-  }
+    const exportCanvas = createGraphics(exportSize, exportSize);
 
-  /* export PDF */
+    exportCanvas.background(255);
 
-  if(data.type==="exportPDF"){
+    const scale = exportSize / width;
 
-    const canvas=document.querySelector("canvas");
-    const imgData=canvas.toDataURL("image/png");
+    layers.forEach(layer => {
 
-    const { jsPDF }=window.jspdf;
+      const c = externalControls[layer.prefix];
 
-    const pdf=new jsPDF({
-      orientation:"landscape",
-      unit:"px",
-      format:[width,height]
+      if (!c.enabled || !layer.image) return;
+
+      const spacing = c.spacing * scale;
+      const size = c.size * scale;
+
+      const offsetX = c.x * scale;
+      const offsetY = c.y * scale;
+
+      const rotation = radians(c.rotation);
+
+      const buffer = spacing * 2;
+
+      for (let x = -buffer; x < exportSize + buffer; x += spacing) {
+        for (let y = -buffer; y < exportSize + buffer; y += spacing) {
+
+          exportCanvas.push();
+
+          exportCanvas.translate(
+            x + offsetX,
+            y + offsetY
+          );
+
+          exportCanvas.rotate(rotation);
+
+          exportCanvas.tint(255, c.transparency);
+
+          exportCanvas.imageMode(CENTER);
+
+          exportCanvas.image(
+            layer.image,
+            0,
+            0,
+            size,
+            size
+          );
+
+          exportCanvas.pop();
+
+        }
+      }
+
     });
 
-    pdf.addImage(imgData,"PNG",0,0,width,height);
+    const link = document.createElement("a");
 
-    pdf.save("xapa-composition.pdf");
+    link.download = "xapa-composition.png";
+    link.href = exportCanvas.canvas.toDataURL("image/png");
+
+    link.click();
 
   }
 
 });
 
-/* ---------------- CLASSE XAPA ---------------- */
+/* ---------- CLASSE ---------- */
 
-class Xapa{
+class Xapa {
 
-  constructor(prefix,image){
-    this.prefix=prefix;
-    this.image=image;
+  constructor(prefix, image) {
+    this.prefix = prefix;
+    this.image = image;
   }
 
-  update(){
+  update() {
 
-    const c=externalControls[this.prefix];
+    const c = externalControls[this.prefix];
 
-    this.enabled=c.enabled;
-    this.rotation=radians(c.rotation);
-    this.spacing=c.spacing;
-    this.size=c.size;
-    this.transparency=c.transparency;
-    this.offsetX=c.x;
-    this.offsetY=c.y;
+    this.enabled = c.enabled;
+    this.rotation = radians(c.rotation);
+    this.spacing = c.spacing;
+    this.size = c.size;
+    this.transparency = c.transparency;
+    this.offsetX = c.x;
+    this.offsetY = c.y;
 
   }
 
-  display(){
+  display() {
 
-    if(!this.enabled) return;
-    if(!this.image) return;
+    if (!this.enabled) return;
+    if (!this.image) return;
 
-    const buffer=this.spacing*2;
+    const buffer = this.spacing * 2;
 
-    for(let x=-buffer;x<width+buffer;x+=this.spacing){
-      for(let y=-buffer;y<height+buffer;y+=this.spacing){
+    for (let x = -buffer; x < width + buffer; x += this.spacing) {
+      for (let y = -buffer; y < height + buffer; y += this.spacing) {
 
         push();
 
-        translate(x+this.offsetX,y+this.offsetY);
+        translate(x + this.offsetX, y + this.offsetY);
 
         rotate(this.rotation);
 
-        tint(255,this.transparency);
+        tint(255, this.transparency);
 
         imageMode(CENTER);
 
