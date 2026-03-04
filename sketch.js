@@ -15,7 +15,7 @@ y:60
 
 x2:{
 enabled:true,
-rotation:90,
+rotation:70,
 spacing:120,
 size:180,
 transparency:255,
