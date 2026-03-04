@@ -1,4 +1,5 @@
 let layers = [];
+let baseImages = {};
 
 function defaultState() {
   return {
@@ -18,7 +19,20 @@ let externalControls = {
   x3: defaultState()
 };
 
+/* -------------------- PRELOAD -------------------- */
+
+function preload() {
+
+  baseImages.x1 = loadImage("img1.png");
+  baseImages.x2 = loadImage("img2.png");
+  baseImages.x3 = loadImage("img3.png");
+
+}
+
+/* -------------------- SETUP -------------------- */
+
 function setup() {
+
   const container = document.getElementById("sketch-container");
 
   createCanvas(
@@ -26,40 +40,29 @@ function setup() {
     container.offsetHeight
   ).parent("sketch-container");
 
-  // Criamos layers vazias primeiro
-  layers.push(new Xapa("x1"));
-  layers.push(new Xapa("x2"));
-  layers.push(new Xapa("x3"));
+  layers.push(new Xapa("x1", baseImages.x1));
+  layers.push(new Xapa("x2", baseImages.x2));
+  layers.push(new Xapa("x3", baseImages.x3));
 
-  // Agora carregamos imagens base
-  loadImage("img1.png", img => {
-    layers[0].image = img;
-    redraw();
-  });
-
-  loadImage("img2.png", img => {
-    layers[1].image = img;
-    redraw();
-  });
-
-  loadImage("img3.png", img => {
-    layers[2].image = img;
-    redraw();
-  });
-
-  noLoop();
 }
 
+/* -------------------- DRAW -------------------- */
+
 function draw() {
+
   background(255);
 
   layers.forEach(layer => {
     layer.update();
     layer.display();
   });
+
 }
 
-function windowResized() {
+/* -------------------- RESIZE -------------------- */
+
+function windowResized(){
+
   const container = document.getElementById("sketch-container");
 
   resizeCanvas(
@@ -67,42 +70,71 @@ function windowResized() {
     container.offsetHeight
   );
 
-  redraw();
 }
 
-window.addEventListener("message", (event) => {
-  const data = event.data;
-  if (!data) return;
+/* -------------------- MESSAGE LISTENER -------------------- */
 
-  if (data.type === "updateXapa") {
+window.addEventListener("message", (event) => {
+
+  const data = event.data;
+  if(!data) return;
+
+  /* sliders */
+
+  if(data.type === "updateXapa"){
 
     externalControls[data.xapa] = {
       ...externalControls[data.xapa],
       ...data.values
     };
 
-    redraw();
   }
 
-  if (data.type === "uploadImage") {
+  /* upload imagem */
+
+  if(data.type === "uploadImage"){
 
     const layer = layers.find(l => l.prefix === data.xapa);
-    if (!layer) return;
 
-    loadImage(data.imageData, (img) => {
+    if(!layer) return;
+
+    loadImage(data.imageData, img => {
+
       layer.image = img;
-      redraw();
+
     });
+
   }
+
+  /* alterar ordem */
+
+  if(data.type === "setOrder"){
+
+    const order = data.order;
+
+    layers.sort((a,b)=>{
+
+      return order.indexOf(a.prefix) - order.indexOf(b.prefix);
+
+    });
+
+  }
+
 });
 
+/* -------------------- CLASSE XAPA -------------------- */
+
 class Xapa {
-  constructor(prefix) {
+
+  constructor(prefix, image){
+
     this.prefix = prefix;
-    this.image = null;
+    this.image = image;
+
   }
 
-  update() {
+  update(){
+
     const c = externalControls[this.prefix];
 
     this.enabled = c.enabled;
@@ -112,26 +144,42 @@ class Xapa {
     this.transparency = c.transparency;
     this.offsetX = c.x;
     this.offsetY = c.y;
+
   }
 
-  display() {
-    if (!this.enabled) return;
-    if (!this.image) return;
+  display(){
+
+    if(!this.enabled) return;
+    if(!this.image) return;
 
     const buffer = this.spacing * 2;
 
-    for (let x = -buffer; x < width + buffer; x += this.spacing) {
-      for (let y = -buffer; y < height + buffer; y += this.spacing) {
+    for(let x = -buffer; x < width + buffer; x += this.spacing){
+      for(let y = -buffer; y < height + buffer; y += this.spacing){
 
         push();
+
         translate(x + this.offsetX, y + this.offsetY);
+
         rotate(this.rotation);
+
         tint(255, this.transparency);
+
         imageMode(CENTER);
-        image(this.image, 0, 0, this.size, this.size);
+
+        image(
+          this.image,
+          0,
+          0,
+          this.size,
+          this.size
+        );
+
         pop();
 
       }
     }
+
   }
+
 }
