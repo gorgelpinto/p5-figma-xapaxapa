@@ -25,10 +25,10 @@ y:80
 
 x3:{
 enabled:true,
-rotation:-25,
+rotation:-45,
 spacing:600,
-size:500,
-transparency:55,
+size:750,
+transparency:200,
 x:20,
 y:60
 }
