@@ -1,246 +1,245 @@
 let layers = [];
-let baseImages = {};
-
-function defaultState() {
-  return {
-    enabled: true,
-    rotation: 180,
-    spacing: 80,
-    size: 120,
-    transparency: 255,
-    x: 0,
-    y: 0
-  };
-}
+let images = {};
 
 let externalControls = {
-  x1: defaultState(),
-  x2: defaultState(),
-  x3: defaultState()
+
+x1:{
+enabled:true,
+rotation:180,
+spacing:80,
+size:260,
+transparency:255,
+x:-80,
+y:60
+},
+
+x2:{
+enabled:true,
+rotation:140,
+spacing:120,
+size:180,
+transparency:255,
+x:40,
+y:80
+},
+
+x3:{
+enabled:true,
+rotation:200,
+spacing:160,
+size:200,
+transparency:255,
+x:20,
+y:60
+}
+
 };
 
-/* ---------- PRELOAD ---------- */
 
-function preload() {
+/* ---------- PRELOAD IMAGES ---------- */
 
-  baseImages.x1 = loadImage("img1.png");
-  baseImages.x2 = loadImage("img2.png");
-  baseImages.x3 = loadImage("img3.png");
+function preload(){
+
+images[1] = loadImage("img1.png");
+images[2] = loadImage("img3.png");
+images[3] = loadImage("img2.png");
 
 }
+
 
 /* ---------- SETUP ---------- */
 
-function setup() {
+function setup(){
 
-  const container = document.getElementById("sketch-container");
+const container = document.getElementById("sketch-container");
 
-  createCanvas(
-    container.offsetWidth,
-    container.offsetHeight
-  ).parent("sketch-container");
+const canvas = createCanvas(
+container.offsetWidth,
+container.offsetHeight
+);
 
-  layers.push(new Xapa("x1", baseImages.x1));
-  layers.push(new Xapa("x2", baseImages.x2));
-  layers.push(new Xapa("x3", baseImages.x3));
+canvas.parent("sketch-container");
+
+layers.push(new Layer(1,"x1"));
+layers.push(new Layer(2,"x2"));
+layers.push(new Layer(3,"x3"));
+
+noLoop();
 
 }
+
 
 /* ---------- DRAW ---------- */
 
-function draw() {
+function draw(){
 
-  background(255);
+background(255);
 
-  layers.forEach(layer => {
-    layer.update();
-    layer.display();
-  });
+layers.forEach(layer=>{
+layer.update();
+layer.display();
+});
 
 }
+
 
 /* ---------- RESIZE ---------- */
 
-function windowResized() {
+function windowResized(){
 
-  const container = document.getElementById("sketch-container");
+const container = document.getElementById("sketch-container");
 
-  resizeCanvas(
-    container.offsetWidth,
-    container.offsetHeight
-  );
+resizeCanvas(
+container.offsetWidth,
+container.offsetHeight
+);
+
+redraw();
 
 }
 
-/* ---------- MESSAGES ---------- */
 
-window.addEventListener("message", (event) => {
+/* ---------- RECEIVE DATA FROM FIGMA ---------- */
 
-  const data = event.data;
-  if (!data) return;
+window.addEventListener("message",(event)=>{
 
-  /* sliders */
+const data = event.data;
 
-  if (data.type === "updateXapa") {
+if(data.type==="updateXapa"){
 
-    externalControls[data.xapa] = {
-      ...externalControls[data.xapa],
-      ...data.values
-    };
+externalControls[data.xapa] = {
+...externalControls[data.xapa],
+...data.values
+};
 
-  }
+redraw();
 
-  /* upload imagem */
+}
 
-  if (data.type === "uploadImage") {
 
-    const layer = layers.find(l => l.prefix === data.xapa);
-    if (!layer) return;
+if(data.type==="uploadImage"){
 
-    loadImage(data.imageData, img => {
-      layer.image = img;
-    });
+loadImage(data.imageData,img=>{
 
-  }
+const index = data.xapa==="x1" ? 0 :
+data.xapa==="x2" ? 1 : 2;
 
-  /* ordem */
+layers[index].image = img;
 
-  if (data.type === "setOrder") {
-
-    const order = data.order;
-
-    layers.sort((a, b) => {
-      return order.indexOf(a.prefix) - order.indexOf(b.prefix);
-    });
-
-  }
-
-  /* EXPORT PNG */
-
-  if (data.type === "exportPNG") {
-
-    const exportSize = data.size || 4000;
-
-    const exportCanvas = createGraphics(exportSize, exportSize);
-
-    exportCanvas.background(255);
-
-    const scale = exportSize / width;
-
-    layers.forEach(layer => {
-
-      const c = externalControls[layer.prefix];
-
-      if (!c.enabled || !layer.image) return;
-
-      const spacing = c.spacing * scale;
-      const size = c.size * scale;
-
-      const offsetX = c.x * scale;
-      const offsetY = c.y * scale;
-
-      const rotation = radians(c.rotation);
-
-      const buffer = spacing * 2;
-
-      for (let x = -buffer; x < exportSize + buffer; x += spacing) {
-        for (let y = -buffer; y < exportSize + buffer; y += spacing) {
-
-          exportCanvas.push();
-
-          exportCanvas.translate(
-            x + offsetX,
-            y + offsetY
-          );
-
-          exportCanvas.rotate(rotation);
-
-          exportCanvas.tint(255, c.transparency);
-
-          exportCanvas.imageMode(CENTER);
-
-          exportCanvas.image(
-            layer.image,
-            0,
-            0,
-            size,
-            size
-          );
-
-          exportCanvas.pop();
-
-        }
-      }
-
-    });
-
-    const link = document.createElement("a");
-
-    link.download = "xapa-composition.png";
-    link.href = exportCanvas.canvas.toDataURL("image/png");
-
-    link.click();
-
-  }
+redraw();
 
 });
 
-/* ---------- CLASSE ---------- */
+}
 
-class Xapa {
 
-  constructor(prefix, image) {
-    this.prefix = prefix;
-    this.image = image;
-  }
+if(data.type==="setOrder"){
 
-  update() {
+const newLayers = [];
 
-    const c = externalControls[this.prefix];
+data.order.forEach(key=>{
 
-    this.enabled = c.enabled;
-    this.rotation = radians(c.rotation);
-    this.spacing = c.spacing;
-    this.size = c.size;
-    this.transparency = c.transparency;
-    this.offsetX = c.x;
-    this.offsetY = c.y;
+const layer = layers.find(l=>l.prefix===key);
+if(layer) newLayers.push(layer);
 
-  }
+});
 
-  display() {
+layers = newLayers;
 
-    if (!this.enabled) return;
-    if (!this.image) return;
+redraw();
 
-    const buffer = this.spacing * 2;
+}
 
-    for (let x = -buffer; x < width + buffer; x += this.spacing) {
-      for (let y = -buffer; y < height + buffer; y += this.spacing) {
 
-        push();
+if(data.type==="exportPNG"){
 
-        translate(x + this.offsetX, y + this.offsetY);
+exportPNG(data.size);
 
-        rotate(this.rotation);
+}
 
-        tint(255, this.transparency);
+});
 
-        imageMode(CENTER);
 
-        image(
-          this.image,
-          0,
-          0,
-          this.size,
-          this.size
-        );
+/* ---------- EXPORT IMAGE ---------- */
 
-        pop();
+function exportPNG(size){
 
-      }
-    }
+let g = createGraphics(size,size);
 
-  }
+g.background(255);
+
+layers.forEach(layer=>{
+layer.update();
+layer.display(g);
+});
+
+save(g,"xapa.png");
+
+}
+
+
+/* ---------- LAYER CLASS ---------- */
+
+class Layer{
+
+constructor(index,prefix){
+
+this.image = images[index];
+this.prefix = prefix;
+
+}
+
+update(){
+
+const c = externalControls[this.prefix];
+
+this.isActive = c.enabled;
+this.rotationAngle = radians(c.rotation);
+this.spacing = c.spacing;
+this.imageSize = c.size;
+this.transparency = c.transparency;
+this.horizontalOffset = c.x;
+this.verticalOffset = c.y;
+
+}
+
+display(target){
+
+if(!this.isActive) return;
+
+const ctx = target || window;
+
+const buffer = this.spacing * 2;
+
+for(let x=-buffer; x<width+buffer; x+=this.spacing){
+
+for(let y=-buffer; y<height+buffer; y+=this.spacing){
+
+ctx.push();
+
+ctx.translate(
+x + this.horizontalOffset,
+y + this.verticalOffset
+);
+
+ctx.rotate(this.rotationAngle);
+ctx.tint(255,this.transparency);
+ctx.imageMode(CENTER);
+
+ctx.image(
+this.image,
+0,
+0,
+this.imageSize,
+this.imageSize
+);
+
+ctx.pop();
+
+}
+
+}
+
+}
 
 }
