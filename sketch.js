@@ -7,7 +7,7 @@ x1:{
 enabled:true,
 rotation:100,
 spacing:80,
-size:1000,
+size:500,
 transparency:255,
 x:-80,
 y:60
