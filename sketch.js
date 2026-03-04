@@ -18,15 +18,15 @@ enabled:true,
 rotation:70,
 spacing:120,
 size:200,
-transparency:200,
+transparency:180,
 x:40,
 y:80
 },
 
 x3:{
 enabled:true,
-rotation:-25,
-spacing:400,
+rotation:0,
+spacing:300,
 size:750,
 transparency:200,
 x:20,
