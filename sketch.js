@@ -6,7 +6,7 @@ let externalControls = {
 x1:{
 enabled:true,
 rotation:-20,
-spacing:325,
+spacing:335,
 size:750,
 transparency:255,
 x:-80,
