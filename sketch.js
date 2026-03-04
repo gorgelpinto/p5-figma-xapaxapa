@@ -15,10 +15,10 @@ y:60
 
 x2:{
 enabled:true,
-rotation:70,
+rotation:90,
 spacing:120,
 size:200,
-transparency:180,
+transparency:200,
 x:40,
 y:80
 },
@@ -26,9 +26,9 @@ y:80
 x3:{
 enabled:true,
 rotation:0,
-spacing:300,
+spacing:400,
 size:750,
-transparency:200,
+transparency:210,
 x:20,
 y:60
 }
