@@ -18,7 +18,7 @@ enabled:true,
 rotation:90,
 spacing:120,
 size:200,
-transparency:200,
+transparency:250,
 x:40,
 y:80
 },
@@ -26,7 +26,7 @@ y:80
 x3:{
 enabled:true,
 rotation:0,
-spacing:400,
+spacing:500,
 size:750,
 transparency:210,
 x:20,
