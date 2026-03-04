@@ -3,35 +3,7 @@ let images = {};
 
 let externalControls = {
 
-x1:{
-enabled:true,
-rotation:100,
-spacing:80,
-size:2000,
-transparency:255,
-x:-80,
-y:60
-},
 
-x2:{
-enabled:true,
-rotation:140,
-spacing:120,
-size:180,
-transparency:255,
-x:40,
-y:80
-},
-
-x3:{
-enabled:true,
-rotation:200,
-spacing:160,
-size:200,
-transparency:255,
-x:20,
-y:60
-}
 
 };
 
