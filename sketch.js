@@ -72,7 +72,9 @@ background(255)
 
 order.forEach(key=>{
 
-const layer = layers.find(l=>l.key===key)
+const layer = layers.find(l => l.key === key)
+
+if(!layer) return
 
 layer.update()
 layer.display()
@@ -172,6 +174,7 @@ y + offsetY + size/2
 )
 
 buffer.rotate(rotation)
+
 buffer.tint(255,c.transparency)
 
 buffer.imageMode(CENTER)
