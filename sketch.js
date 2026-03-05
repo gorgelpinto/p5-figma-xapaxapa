@@ -10,7 +10,7 @@ spacing:350,
 size:750,
 transparency:225,
 x:-80,
-y:-15
+y:-45
 },
 
 x2:{
