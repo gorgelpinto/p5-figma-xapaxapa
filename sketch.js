@@ -178,13 +178,7 @@ update(){
 const c = externalControls[this.key]
 
 this.enabled = c.enabled
-this.rotation = radians(c.rotation)
-this.spacing = c.spacing
-this.size = c.size
-this.transparency = c.transparency
-this.offsetX = c.x
-this.offsetY = c.y
-
+this.controls = c
 this.image = images[this.key]
 
 }
@@ -193,7 +187,7 @@ display(){
 
 if(!this.enabled || !this.image) return
 
-drawPattern(this,this.image,width,height)
+drawPattern(window,this.controls,this.image,width,height)
 
 }
 
