@@ -15,12 +15,12 @@ y:50
 
 x2:{
 enabled:true,
-rotation:-10,
-spacing:500,
-size:650,
+rotation:-30,
+spacing:700,
+size:750,
 transparency:250,
 x:40,
-y:80
+y:100
 },
 
 x3:{
