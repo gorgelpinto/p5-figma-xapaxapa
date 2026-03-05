@@ -30,7 +30,7 @@ spacing:600,
 size:750,
 transparency:210,
 x:20,
-y:10
+y:25
 }
 
 };
