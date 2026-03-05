@@ -16,8 +16,8 @@ y:150
 x2:{
 enabled:true,
 rotation:0,
-spacing:20,
-size:100,
+spacing:250,
+size:300,
 transparency:250,
 x:40,
 y:80
