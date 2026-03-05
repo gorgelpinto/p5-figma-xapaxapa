@@ -1,5 +1,5 @@
-let layers = [];
-let images = {};
+let layers = []
+let images = {}
 
 let externalControls = {
 
@@ -10,7 +10,7 @@ spacing:350,
 size:750,
 transparency:225,
 x:-80,
-y:15
+y:-15
 },
 
 x2:{
@@ -33,222 +33,225 @@ x:20,
 y:95
 }
 
-};
+}
 
-
+let order = ["x1","x2","x3"]
 
 function preload(){
 
-images[1] = loadImage("img1.png");
-images[2] = loadImage("img3.png");
-images[3] = loadImage("img2.png");
+images["x1"] = loadImage("img1.png")
+images["x2"] = loadImage("img2.png")
+images["x3"] = loadImage("img3.png")
 
 }
 
-
-
 function setup(){
 
-const container = document.getElementById("sketch-container");
+const container = document.getElementById("sketch-container")
 
 const canvas = createCanvas(
 container.offsetWidth,
 container.offsetHeight
-);
+)
 
-canvas.parent("sketch-container");
+canvas.parent("sketch-container")
 
-layers.push(new Layer(1,"x1"));
-layers.push(new Layer(2,"x2"));
-layers.push(new Layer(3,"x3"));
+layers.push(new Layer("x1"))
+layers.push(new Layer("x2"))
+layers.push(new Layer("x3"))
 
-noLoop();
+noLoop()
+
+setTimeout(sendInitialState,300)
 
 }
-
-
 
 function draw(){
 
-background(255);
+background(255)
 
-layers.forEach(layer=>{
-layer.update();
-layer.display();
-});
+order.forEach(key=>{
+
+const layer = layers.find(l=>l.key===key)
+
+layer.update()
+layer.display()
+
+})
 
 }
 
-
-
 function windowResized(){
 
-const container = document.getElementById("sketch-container");
+const container = document.getElementById("sketch-container")
 
 resizeCanvas(
 container.offsetWidth,
 container.offsetHeight
-);
+)
 
-redraw();
+redraw()
 
 }
 
+function sendInitialState(){
 
+window.parent.postMessage({
+type:"initialState",
+controls:externalControls
+},"*")
 
-/* ---------- MESSAGE LISTENER ---------- */
+}
 
 window.addEventListener("message",(event)=>{
 
-const data = event.data;
-
-
+const data = event.data
 
 if(data.type==="updateXapa"){
 
 externalControls[data.xapa] = {
 ...externalControls[data.xapa],
 ...data.values
-};
+}
 
-redraw();
+redraw()
 
 }
 
+if(data.type==="updateOrder"){
 
+order = data.order
+redraw()
+
+}
 
 if(data.type==="uploadImage"){
 
-loadImage(data.imageData,img=>{
-
-const index =
-data.xapa==="x1" ? 0 :
-data.xapa==="x2" ? 1 :
-2;
-
-layers[index].image = img;
-
-redraw();
-
-});
+loadImage(data.data,img=>{
+images[data.xapa]=img
+redraw()
+})
 
 }
-
-
-
-if(data.type==="setOrder"){
-
-const newLayers=[];
-
-data.order.forEach(key=>{
-
-const layer = layers.find(l=>l.prefix===key);
-
-if(layer) newLayers.push(layer);
-
-});
-
-layers=newLayers;
-
-redraw();
-
-}
-
-
 
 if(data.type==="exportPNG"){
 
-exportPNG(data.size);
+exportPNG(data.size)
 
 }
 
-});
-
-
-
-/* ---------- EXPORT ---------- */
+})
 
 function exportPNG(size){
 
-let g = createGraphics(size,size);
+const buffer = createGraphics(size,size)
 
-g.background(255);
+buffer.background(255)
 
-layers.forEach(layer=>{
-layer.update();
-layer.display(g);
-});
+order.forEach(key=>{
 
-save(g,"xapa.png");
+const c = externalControls[key]
+const img = images[key]
+
+if(!c.enabled || !img) return
+
+const spacing = c.spacing
+const rotation = radians(c.rotation)
+const sizeImg = c.size
+const offsetX = c.x
+const offsetY = c.y
+
+for(let x=-spacing*2;x<size+spacing*2;x+=spacing){
+for(let y=-spacing*2;y<size+spacing*2;y+=spacing){
+
+buffer.push()
+
+buffer.translate(
+x + offsetX + size/2,
+y + offsetY + size/2
+)
+
+buffer.rotate(rotation)
+buffer.tint(255,c.transparency)
+
+buffer.imageMode(CENTER)
+
+buffer.image(
+img,
+0,
+0,
+sizeImg,
+sizeImg
+)
+
+buffer.pop()
 
 }
+}
 
+})
 
+save(buffer,"xapa.png")
 
-/* ---------- LAYER CLASS ---------- */
+}
 
 class Layer{
 
-constructor(index,prefix){
+constructor(key){
 
-this.image = images[index];
-this.prefix = prefix;
+this.key = key
 
 }
-
-
 
 update(){
 
-const c = externalControls[this.prefix];
+const c = externalControls[this.key]
 
-this.isActive = c.enabled;
-this.rotationAngle = radians(c.rotation);
-this.spacing = c.spacing;
-this.imageSize = c.size;
-this.transparency = c.transparency;
-this.horizontalOffset = c.x;
-this.verticalOffset = c.y;
+this.enabled = c.enabled
+this.rotation = radians(c.rotation)
+this.spacing = c.spacing
+this.size = c.size
+this.transparency = c.transparency
+this.offsetX = c.x
+this.offsetY = c.y
+
+this.image = images[this.key]
 
 }
 
+display(){
 
+if(!this.enabled || !this.image) return
 
-display(target){
+const buffer = this.spacing*2
 
-if(!this.isActive) return;
+for(let x=-buffer;x<width+buffer;x+=this.spacing){
+for(let y=-buffer;y<height+buffer;y+=this.spacing){
 
-const ctx = target || window;
+push()
 
-const buffer = this.spacing * 2;
+translate(
+x + this.offsetX,
+y + this.offsetY
+)
 
-for(let x=-buffer; x<width+buffer; x+=this.spacing){
+rotate(this.rotation)
 
-for(let y=-buffer; y<height+buffer; y+=this.spacing){
+tint(255,this.transparency)
 
-ctx.push();
+imageMode(CENTER)
 
-ctx.translate(
-x + this.horizontalOffset,
-y + this.verticalOffset
-);
-
-ctx.rotate(this.rotationAngle);
-ctx.tint(255,this.transparency);
-ctx.imageMode(CENTER);
-
-ctx.image(
+image(
 this.image,
 0,
 0,
-this.imageSize,
-this.imageSize
-);
+this.size,
+this.size
+)
 
-ctx.pop();
+pop()
 
 }
-
 }
 
 }
