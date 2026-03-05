@@ -10,7 +10,7 @@ spacing:350,
 size:750,
 transparency:225,
 x:-80,
-y:45
+y:35
 },
 
 x2:{
@@ -30,7 +30,7 @@ spacing:600,
 size:750,
 transparency:210,
 x:20,
-y:20
+y:10
 }
 
 };
