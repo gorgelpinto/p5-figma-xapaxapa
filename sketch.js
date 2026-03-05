@@ -16,11 +16,11 @@ y:50
 x2:{
 enabled:true,
 rotation:-30,
-spacing:700,
-size:750,
+spacing:600,
+size:850,
 transparency:250,
 x:40,
-y:100
+y:20
 },
 
 x3:{
