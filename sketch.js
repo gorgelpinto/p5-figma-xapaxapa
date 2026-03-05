@@ -157,40 +157,7 @@ const img = images[key]
 
 if(!c.enabled || !img) return
 
-const spacing = c.spacing
-const rotation = radians(c.rotation)
-const sizeImg = c.size
-const offsetX = c.x
-const offsetY = c.y
-
-for(let x=-spacing*2;x<size+spacing*2;x+=spacing){
-for(let y=-spacing*2;y<size+spacing*2;y+=spacing){
-
-buffer.push()
-
-buffer.translate(
-x + offsetX + size/2,
-y + offsetY + size/2
-)
-
-buffer.rotate(rotation)
-
-buffer.tint(255,c.transparency)
-
-buffer.imageMode(CENTER)
-
-buffer.image(
-img,
-0,
-0,
-sizeImg,
-sizeImg
-)
-
-buffer.pop()
-
-}
-}
+drawPattern(buffer,c,img,size,size)
 
 })
 
@@ -226,37 +193,57 @@ display(){
 
 if(!this.enabled || !this.image) return
 
-const buffer = this.spacing*2
+drawPattern(this,this.image,width,height)
 
-for(let x=-buffer;x<width+buffer;x+=this.spacing){
-for(let y=-buffer;y<height+buffer;y+=this.spacing){
+}
 
-push()
+}
 
-translate(
-x + this.offsetX,
-y + this.offsetY
-)
+function drawPattern(target,c,img,w,h){
 
-rotate(this.rotation)
+const spacing = c.spacing
+const rotation = radians(c.rotation)
+const sizeImg = c.size
+const offsetX = c.x
+const offsetY = c.y
+const transparency = c.transparency
 
-tint(255,this.transparency)
+const cols = Math.ceil(w/spacing)+4
+const rows = Math.ceil(h/spacing)+4
 
-imageMode(CENTER)
+const startX = -cols/2 * spacing
+const startY = -rows/2 * spacing
 
-image(
-this.image,
+target.push()
+
+target.translate(w/2,h/2)
+
+for(let i=0;i<cols;i++){
+for(let j=0;j<rows;j++){
+
+const x = startX + i*spacing + offsetX
+const y = startY + j*spacing + offsetY
+
+target.push()
+
+target.translate(x,y)
+target.rotate(rotation)
+target.tint(255,transparency)
+target.imageMode(CENTER)
+
+target.image(
+img,
 0,
 0,
-this.size,
-this.size
+sizeImg,
+sizeImg
 )
 
-pop()
+target.pop()
 
 }
 }
 
-}
+target.pop()
 
 }
