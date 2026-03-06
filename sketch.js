@@ -25,7 +25,7 @@ y:80
 
 x3:{ // folhas castanhas (fundo)
 enabled:true,
-rotation:45,
+rotation:60,
 spacing:140,
 size:220,
 transparency:255,
