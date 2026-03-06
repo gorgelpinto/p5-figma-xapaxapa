@@ -151,6 +151,9 @@ const buffer = createGraphics(size,size)
 buffer.pixelDensity(1)
 buffer.background(255)
 
+/* número fixo de repetições */
+const GRID = 12   // metade do padrão ampliado
+
 order.forEach(key=>{
 
 const c = externalControls[key]
@@ -158,34 +161,38 @@ const img = images[key]
 
 if(!c.enabled || !img) return
 
-const spacing = c.spacing
 const rotation = radians(c.rotation)
 
-/* menos repetições (metade da última versão) */
-const bufferSize = spacing/8
+/* escala proporcional ao tamanho do ficheiro */
+const scaleFactor = size / width
 
-for(let x=-bufferSize;x<=size+bufferSize;x+=spacing){
-for(let y=-bufferSize;y<=size+bufferSize;y+=spacing){
+const spacing = c.spacing * scaleFactor
+const sizeImg = c.size * scaleFactor
+const offsetX = c.x * scaleFactor
+const offsetY = c.y * scaleFactor
+
+buffer.imageMode(CENTER)
+
+for(let ix=-GRID; ix<=GRID; ix++){
+for(let iy=-GRID; iy<=GRID; iy++){
 
 buffer.push()
 
 buffer.translate(
-x + c.x,
-y + c.y
+ix * spacing + offsetX + size/2,
+iy * spacing + offsetY + size/2
 )
 
 buffer.rotate(rotation)
 
 buffer.tint(255,c.transparency)
 
-buffer.imageMode(CENTER)
-
 buffer.image(
 img,
 0,
 0,
-c.size,
-c.size
+sizeImg,
+sizeImg
 )
 
 buffer.pop()
