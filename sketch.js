@@ -147,12 +147,9 @@ exportPNG(data.size)
 function exportPNG(size){
 
 const buffer = createGraphics(size,size)
-
-buffer.pixelDensity(1)
 buffer.background(255)
 
-/* número fixo de repetições */
-const GRID = 12   // metade do padrão ampliado
+const scale = size / width
 
 order.forEach(key=>{
 
@@ -161,31 +158,29 @@ const img = images[key]
 
 if(!c.enabled || !img) return
 
+const spacing = c.spacing * scale
 const rotation = radians(c.rotation)
+const sizeImg = c.size * scale
+const offsetX = c.x * scale
+const offsetY = c.y * scale
 
-/* escala proporcional ao tamanho do ficheiro */
-const scaleFactor = size / width
+const bufferSpacing = spacing * 2
 
-const spacing = c.spacing * scaleFactor
-const sizeImg = c.size * scaleFactor
-const offsetX = c.x * scaleFactor
-const offsetY = c.y * scaleFactor
-
-buffer.imageMode(CENTER)
-
-for(let ix=-GRID; ix<=GRID; ix++){
-for(let iy=-GRID; iy<=GRID; iy++){
+for(let x=-bufferSpacing; x<size+bufferSpacing; x+=spacing){
+for(let y=-bufferSpacing; y<size+bufferSpacing; y+=spacing){
 
 buffer.push()
 
 buffer.translate(
-ix * spacing + offsetX + size/2,
-iy * spacing + offsetY + size/2
+x + offsetX,
+y + offsetY
 )
 
 buffer.rotate(rotation)
 
 buffer.tint(255,c.transparency)
+
+buffer.imageMode(CENTER)
 
 buffer.image(
 img,
