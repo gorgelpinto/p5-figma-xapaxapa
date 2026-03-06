@@ -157,7 +157,37 @@ const img = images[key]
 
 if(!c.enabled || !img) return
 
-drawPattern(buffer,c,img,size,size)
+const spacing = c.spacing
+const rotation = radians(c.rotation)
+
+for(let x=-spacing*2;x<size+spacing*2;x+=spacing){
+for(let y=-spacing*2;y<size+spacing*2;y+=spacing){
+
+buffer.push()
+
+buffer.translate(
+x + c.x + size/2,
+y + c.y + size/2
+)
+
+buffer.rotate(rotation)
+
+buffer.tint(255,c.transparency)
+
+buffer.imageMode(CENTER)
+
+buffer.image(
+img,
+0,
+0,
+c.size,
+c.size
+)
+
+buffer.pop()
+
+}
+}
 
 })
 
@@ -168,9 +198,7 @@ save(buffer,"xapa.png")
 class Layer{
 
 constructor(key){
-
 this.key = key
-
 }
 
 update(){
@@ -184,6 +212,7 @@ this.size = c.size
 this.transparency = c.transparency
 this.offsetX = c.x
 this.offsetY = c.y
+
 this.image = images[this.key]
 
 }
@@ -223,41 +252,6 @@ pop()
 }
 }
 
-}
-
-}
-
-function drawPattern(target,c,img,w,h){
-
-const spacing = c.spacing
-
-for(let x=-spacing*2;x<w+spacing*2;x+=spacing){
-for(let y=-spacing*2;y<h+spacing*2;y+=spacing){
-
-target.push()
-
-target.translate(
-x + c.x,
-y + c.y
-)
-
-target.rotate(radians(c.rotation))
-
-target.tint(255,c.transparency)
-
-target.imageMode(CENTER)
-
-target.image(
-img,
-0,
-0,
-c.size,
-c.size
-)
-
-target.pop()
-
-}
 }
 
 }
