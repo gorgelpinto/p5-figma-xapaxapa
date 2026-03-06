@@ -148,6 +148,7 @@ function exportPNG(size){
 
 const buffer = createGraphics(size,size)
 
+buffer.pixelDensity(1)
 buffer.background(255)
 
 order.forEach(key=>{
@@ -160,7 +161,8 @@ if(!c.enabled || !img) return
 const spacing = c.spacing
 const rotation = radians(c.rotation)
 
-const bufferSize = spacing*2
+/* 1/4 das repetições */
+const bufferSize = spacing/2
 
 for(let x=-bufferSize;x<size+bufferSize;x+=spacing){
 for(let y=-bufferSize;y<size+bufferSize;y+=spacing){
