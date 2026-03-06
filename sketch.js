@@ -161,11 +161,11 @@ if(!c.enabled || !img) return
 const spacing = c.spacing
 const rotation = radians(c.rotation)
 
-/* reduz para cerca de 1/8 das repetições */
-const bufferSize = spacing/4
+/* menos repetições (metade da última versão) */
+const bufferSize = spacing/8
 
-for(let x=-bufferSize;x<size+bufferSize;x+=spacing){
-for(let y=-bufferSize;y<size+bufferSize;y+=spacing){
+for(let x=-bufferSize;x<=size+bufferSize;x+=spacing){
+for(let y=-bufferSize;y<=size+bufferSize;y+=spacing){
 
 buffer.push()
 
