@@ -3,34 +3,34 @@ let images = {}
 
 let externalControls = {
 
-x1:{
+x1:{ // folhas verdes
+enabled:true,
+rotation:0,
+spacing:360,
+size:720,
+transparency:255,
+x:0,
+y:40
+},
+
+x2:{ // dominós
 enabled:true,
 rotation:-20,
-spacing:450,
-size:1000,
-transparency:225,
-x:-80,
-y:75
+spacing:420,
+size:900,
+transparency:230,
+x:-60,
+y:80
 },
 
-x2:{
+x3:{ // gotas castanhas
 enabled:true,
-rotation:-30,
-spacing:600,
-size:850,
-transparency:250,
-x:40,
-y:-20
-},
-
-x3:{
-enabled:true,
-rotation:100,
-spacing:80,
-size:150,
-transparency:210,
-x:20,
-y:95
+rotation:0,
+spacing:140,
+size:220,
+transparency:255,
+x:0,
+y:0
 }
 
 }
