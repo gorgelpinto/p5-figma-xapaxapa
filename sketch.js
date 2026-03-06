@@ -160,14 +160,16 @@ if(!c.enabled || !img) return
 const spacing = c.spacing
 const rotation = radians(c.rotation)
 
-for(let x=-spacing*2;x<size+spacing*2;x+=spacing){
-for(let y=-spacing*2;y<size+spacing*2;y+=spacing){
+const bufferSize = spacing*2
+
+for(let x=-bufferSize;x<size+bufferSize;x+=spacing){
+for(let y=-bufferSize;y<size+bufferSize;y+=spacing){
 
 buffer.push()
 
 buffer.translate(
-x + c.x + size/2,
-y + c.y + size/2
+x + c.x,
+y + c.y
 )
 
 buffer.rotate(rotation)
