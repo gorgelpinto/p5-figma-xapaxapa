@@ -6,24 +6,24 @@ let externalControls = {
 x1:{ // folhas verdes
 enabled:true,
 rotation:0,
-spacing:360,
+spacing:340,
 size:720,
 transparency:255,
 x:0,
 y:40
 },
 
-x2:{ // dominós
+x2:{ // dominós laranja (camada superior)
 enabled:true,
-rotation:-20,
+rotation:-22,
 spacing:420,
-size:900,
+size:950,
 transparency:230,
 x:-60,
 y:80
 },
 
-x3:{ // gotas castanhas
+x3:{ // gotas castanhas (fundo)
 enabled:true,
 rotation:0,
 spacing:140,
@@ -35,7 +35,7 @@ y:0
 
 }
 
-let order = ["x1","x2","x3"]
+let order = ["x3","x1","x2"]
 
 function preload(){
 
