@@ -162,7 +162,7 @@ const spacing = c.spacing
 const rotation = radians(c.rotation)
 
 /* 1/4 das repetições */
-const bufferSize = spacing/2
+const bufferSize = spacing/4
 
 for(let x=-bufferSize;x<size+bufferSize;x+=spacing){
 for(let y=-bufferSize;y<size+bufferSize;y+=spacing){
