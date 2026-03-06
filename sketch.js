@@ -20,7 +20,7 @@ spacing:600,
 size:850,
 transparency:250,
 x:40,
-y:150
+y:50
 },
 
 x3:{
