@@ -39,9 +39,9 @@ let order = ["x1","x2","x3"]
 
 function preload(){
 
-images["x1"] = loadImage("img1.png")
-images["x2"] = loadImage("img2.png")
-images["x3"] = loadImage("img3.png")
+images["x1"] = loadImage("img1.png") // folhas verdes
+images["x2"] = loadImage("img2.png") // dominós
+images["x3"] = loadImage("img3.png") // gotas
 
 }
 
