@@ -161,7 +161,7 @@ if(!c.enabled || !img) return
 const spacing = c.spacing
 const rotation = radians(c.rotation)
 
-/* 1/4 das repetições */
+/* reduz para cerca de 1/8 das repetições */
 const bufferSize = spacing/4
 
 for(let x=-bufferSize;x<size+bufferSize;x+=spacing){
