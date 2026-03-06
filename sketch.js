@@ -178,7 +178,12 @@ update(){
 const c = externalControls[this.key]
 
 this.enabled = c.enabled
-this.controls = c
+this.rotation = radians(c.rotation)
+this.spacing = c.spacing
+this.size = c.size
+this.transparency = c.transparency
+this.offsetX = c.x
+this.offsetY = c.y
 this.image = images[this.key]
 
 }
@@ -187,7 +192,36 @@ display(){
 
 if(!this.enabled || !this.image) return
 
-drawPattern(window,this.controls,this.image,width,height)
+const buffer = this.spacing*2
+
+for(let x=-buffer;x<width+buffer;x+=this.spacing){
+for(let y=-buffer;y<height+buffer;y+=this.spacing){
+
+push()
+
+translate(
+x + this.offsetX,
+y + this.offsetY
+)
+
+rotate(this.rotation)
+
+tint(255,this.transparency)
+
+imageMode(CENTER)
+
+image(
+this.image,
+0,
+0,
+this.size,
+this.size
+)
+
+pop()
+
+}
+}
 
 }
 
@@ -196,48 +230,34 @@ drawPattern(window,this.controls,this.image,width,height)
 function drawPattern(target,c,img,w,h){
 
 const spacing = c.spacing
-const rotation = radians(c.rotation)
-const sizeImg = c.size
-const offsetX = c.x
-const offsetY = c.y
-const transparency = c.transparency
 
-const cols = Math.ceil(w/spacing)+4
-const rows = Math.ceil(h/spacing)+4
-
-const startX = -cols/2 * spacing
-const startY = -rows/2 * spacing
+for(let x=-spacing*2;x<w+spacing*2;x+=spacing){
+for(let y=-spacing*2;y<h+spacing*2;y+=spacing){
 
 target.push()
 
-target.translate(w/2,h/2)
+target.translate(
+x + c.x,
+y + c.y
+)
 
-for(let i=0;i<cols;i++){
-for(let j=0;j<rows;j++){
+target.rotate(radians(c.rotation))
 
-const x = startX + i*spacing + offsetX
-const y = startY + j*spacing + offsetY
+target.tint(255,c.transparency)
 
-target.push()
-
-target.translate(x,y)
-target.rotate(rotation)
-target.tint(255,transparency)
 target.imageMode(CENTER)
 
 target.image(
 img,
 0,
 0,
-sizeImg,
-sizeImg
+c.size,
+c.size
 )
 
 target.pop()
 
 }
 }
-
-target.pop()
 
 }
