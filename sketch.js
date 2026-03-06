@@ -8,7 +8,7 @@ enabled:true,
 rotation:0,
 spacing:340,
 size:720,
-transparency:255,
+transparency:225,
 x:0,
 y:40
 },
@@ -16,16 +16,16 @@ y:40
 x2:{ // dominós laranja (camada superior)
 enabled:true,
 rotation:-22,
-spacing:420,
+spacing:550,
 size:950,
-transparency:230,
+transparency:225,
 x:-60,
 y:80
 },
 
-x3:{ // gotas castanhas (fundo)
+x3:{ // folhas castanhas (fundo)
 enabled:true,
-rotation:0,
+rotation:45,
 spacing:140,
 size:220,
 transparency:255,
