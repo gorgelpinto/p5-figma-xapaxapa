@@ -20,14 +20,14 @@ spacing:600,
 size:850,
 transparency:250,
 x:40,
-y:50
+y:0
 },
 
 x3:{
 enabled:true,
-rotation:150,
+rotation:120,
 spacing:50,
-size:50,
+size:150,
 transparency:210,
 x:20,
 y:95
