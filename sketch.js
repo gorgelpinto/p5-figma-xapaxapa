@@ -3,7 +3,7 @@ let images = {}
 
 let externalControls = {
 
-x1:{ // folhas verdes
+x1:{
 enabled:true,
 rotation:0,
 spacing:340,
@@ -13,7 +13,7 @@ x:0,
 y:40
 },
 
-x2:{ // dominós laranja
+x2:{
 enabled:true,
 rotation:-22,
 spacing:550,
@@ -23,7 +23,7 @@ x:-60,
 y:80
 },
 
-x3:{ // folhas castanhas (fundo)
+x3:{
 enabled:true,
 rotation:60,
 spacing:140,
@@ -43,14 +43,14 @@ images["x2"] = loadImage("img2.png")
 images["x3"] = loadImage("img3.png")
 }
 
-/* 🔥 RESPONSIVE SIZE (MAIN FIX) */
+/* 🔥 RESPONSIVE SIZE */
 function getCanvasSize(){
   const container = document.getElementById("sketch-container")
   const width = container.offsetWidth
 
   return {
     w: width,
-    h: width * 0.5625 // 16:9 ratio
+    h: width * 0.5625
   }
 }
 
@@ -58,12 +58,17 @@ function setup(){
 
   const { w, h } = getCanvasSize()
 
+  /* 🔥 ENABLE TRUE TRANSPARENCY */
+  setAttributes('alpha', true)
+
   const canvas = createCanvas(w, h)
   canvas.parent("sketch-container")
 
-  layers.push(new Layer("x1"))
-  layers.push(new Layer("x2"))
-  layers.push(new Layer("x3"))
+  layers = [
+    new Layer("x1"),
+    new Layer("x2"),
+    new Layer("x3")
+  ]
 
   noLoop()
 
@@ -72,82 +77,66 @@ function setup(){
 
 function draw(){
 
-background(255)
+  clear() // 🔥 real transparency
 
-order.forEach(key=>{
-
-const layer = layers.find(l => l.key === key)
-if(!layer) return
-
-layer.update()
-layer.display()
-
-})
-
+  order.forEach(key=>{
+    const layer = layers.find(l => l.key === key)
+    if(!layer) return
+    layer.update()
+    layer.display()
+  })
 }
 
-/* 🔥 RESPONSIVE RESIZE */
+/* 🔥 RESIZE */
 function windowResized(){
-
   const { w, h } = getCanvasSize()
-
   resizeCanvas(w, h)
-
   redraw()
 }
 
 function sendInitialState(){
-
 window.parent.postMessage({
 type:"initialState",
 controls:externalControls
 },"*")
-
 }
 
+/* 🔥 MESSAGE LISTENER */
 window.addEventListener("message",(event)=>{
 
 const data = event.data
 
 if(data.type==="updateXapa"){
-
 externalControls[data.xapa] = {
 ...externalControls[data.xapa],
 ...data.values
 }
-
 redraw()
-
 }
 
 if(data.type==="updateOrder"){
-
 order = data.order
 redraw()
-
 }
 
 if(data.type==="uploadImage"){
-
 loadImage(data.data,img=>{
 images[data.xapa]=img
 redraw()
 })
-
 }
 
 if(data.type==="exportPNG"){
-
 exportPNG(data.size)
-
 }
 
 })
 
+/* 🔥 EXPORT */
 function exportPNG(size){
 
 const buffer = createGraphics(size,size)
-buffer.background(255)
+buffer.clear() // 🔥 transparent export background
 
 const scale = size / width
 
@@ -164,31 +153,19 @@ const sizeImg = c.size * scale
 const offsetX = c.x * scale
 const offsetY = c.y * scale
 
-const bufferSpacing = spacing * 2
+const bufferLimit = size + spacing
 
-for(let x=-bufferSpacing; x<size+bufferSpacing; x+=spacing){
-for(let y=-bufferSpacing; y<size+bufferSpacing; y+=spacing){
+for(let x=-bufferLimit; x<=size+bufferLimit; x+=spacing){
+for(let y=-bufferLimit; y<=size+bufferLimit; y+=spacing){
 
 buffer.push()
 
-buffer.translate(
-x + offsetX,
-y + offsetY
-)
-
+buffer.translate(x + offsetX, y + offsetY)
 buffer.rotate(rotation)
-
 buffer.tint(255,c.transparency)
-
 buffer.imageMode(CENTER)
 
-buffer.image(
-img,
-0,
-0,
-sizeImg,
-sizeImg
-)
+buffer.image(img, 0, 0, sizeImg, sizeImg)
 
 buffer.pop()
 
@@ -198,9 +175,9 @@ buffer.pop()
 })
 
 save(buffer,"xapa.png")
-
 }
 
+/* 🔥 LAYER */
 class Layer{
 
 constructor(key){
@@ -227,31 +204,20 @@ display(){
 
 if(!this.enabled || !this.image) return
 
-const buffer = this.spacing * 2
+/* 🔥 FIX: FULL COVERAGE */
+const buffer = Math.max(width, height)
 
-for(let x=-buffer; x<width+buffer; x+=this.spacing){
-for(let y=-buffer; y<height+buffer; y+=this.spacing){
+for(let x=-buffer; x<=width+buffer; x+=this.spacing){
+for(let y=-buffer; y<=height+buffer; y+=this.spacing){
 
 push()
 
-translate(
-x + this.offsetX,
-y + this.offsetY
-)
-
+translate(x + this.offsetX, y + this.offsetY)
 rotate(this.rotation)
-
 tint(255,this.transparency)
-
 imageMode(CENTER)
 
-image(
-this.image,
-0,
-0,
-this.size,
-this.size
-)
+image(this.image, 0, 0, this.size, this.size)
 
 pop()
 
