@@ -13,7 +13,7 @@ x:0,
 y:40
 },
 
-x2:{ // dominós laranja (camada superior)
+x2:{ // dominós laranja
 enabled:true,
 rotation:-22,
 spacing:550,
@@ -38,32 +38,36 @@ y:0
 let order = ["x3","x1","x2"]
 
 function preload(){
+images["x1"] = loadImage("img1.png")
+images["x2"] = loadImage("img2.png")
+images["x3"] = loadImage("img3.png")
+}
 
-images["x1"] = loadImage("img1.png") // folhas verdes
-images["x2"] = loadImage("img2.png") // dominós
-images["x3"] = loadImage("img3.png") // gotas
+/* 🔥 RESPONSIVE SIZE (MAIN FIX) */
+function getCanvasSize(){
+  const container = document.getElementById("sketch-container")
+  const width = container.offsetWidth
 
+  return {
+    w: width,
+    h: width * 0.5625 // 16:9 ratio
+  }
 }
 
 function setup(){
 
-const container = document.getElementById("sketch-container")
+  const { w, h } = getCanvasSize()
 
-const canvas = createCanvas(
-container.offsetWidth,
-container.offsetHeight
-)
+  const canvas = createCanvas(w, h)
+  canvas.parent("sketch-container")
 
-canvas.parent("sketch-container")
+  layers.push(new Layer("x1"))
+  layers.push(new Layer("x2"))
+  layers.push(new Layer("x3"))
 
-layers.push(new Layer("x1"))
-layers.push(new Layer("x2"))
-layers.push(new Layer("x3"))
+  noLoop()
 
-noLoop()
-
-setTimeout(sendInitialState,300)
-
+  setTimeout(sendInitialState,300)
 }
 
 function draw(){
@@ -73,7 +77,6 @@ background(255)
 order.forEach(key=>{
 
 const layer = layers.find(l => l.key === key)
-
 if(!layer) return
 
 layer.update()
@@ -83,17 +86,14 @@ layer.display()
 
 }
 
+/* 🔥 RESPONSIVE RESIZE */
 function windowResized(){
 
-const container = document.getElementById("sketch-container")
+  const { w, h } = getCanvasSize()
 
-resizeCanvas(
-container.offsetWidth,
-container.offsetHeight
-)
+  resizeCanvas(w, h)
 
-redraw()
-
+  redraw()
 }
 
 function sendInitialState(){
@@ -227,10 +227,10 @@ display(){
 
 if(!this.enabled || !this.image) return
 
-const buffer = this.spacing*2
+const buffer = this.spacing * 2
 
-for(let x=-buffer;x<width+buffer;x+=this.spacing){
-for(let y=-buffer;y<height+buffer;y+=this.spacing){
+for(let x=-buffer; x<width+buffer; x+=this.spacing){
+for(let y=-buffer; y<height+buffer; y+=this.spacing){
 
 push()
 
