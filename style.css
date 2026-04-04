@@ -10,7 +10,7 @@ html, body {
 /* CONTAINER DO SKETCH */
 #sketch-container {
   width: 100%;
-  height: 70vh;            /* Ajustável */
+  height: 100%; /* 🔥 let JS control height */
   overflow: hidden;
   display: block;
 }
