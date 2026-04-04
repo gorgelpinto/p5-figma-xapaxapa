@@ -2,20 +2,26 @@
 html, body {
   margin: 0;
   padding: 0;
-  background: #ffffff;
-  font-family: 'Roboto Mono', monospace;
+  background: transparent; /* 🔥 REMOVE branco */
+  font-family: monospace; /* opcional */
   color: #111;
+}
+
+/* 🔥 IMPORTANTE: remove comportamento inline do canvas */
+canvas {
+  display: block;
 }
 
 /* CONTAINER DO SKETCH */
 #sketch-container {
   width: 100%;
-  height: 100%; /* 🔥 let JS control height */
+  height: 100%;
   overflow: hidden;
   display: block;
+  position: relative; /* 🔥 estabilidade extra */
 }
 
-/* CONTROLOS */
+/* CONTROLOS (podes manter ou remover se não usas) */
 #controls {
   padding: 60px 40px;
   display: flex;
@@ -33,7 +39,7 @@ html, body {
   min-width: 240px;
 }
 
-/* TÍTULO DA LAYER */
+/* TÍTULO */
 .layer-controls h3 {
   margin: 0 0 15px 0;
   font-weight: 500;
