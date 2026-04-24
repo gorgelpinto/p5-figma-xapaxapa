@@ -68,9 +68,8 @@ let p5Canvas // 🔥 global
 
 function setup(){
 
-  document.documentElement.style.overflow = "hidden"
-  document.body.style.overflow = "hidden"
-  document.body.style.margin = "0"
+  document.documentElement.style.cssText = "margin:0;padding:0;overflow:hidden;height:100%;"
+document.body.style.cssText = "margin:0;padding:0;overflow:hidden;height:100%;"
 
   setAttributes('alpha', false)
 
