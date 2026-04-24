@@ -50,8 +50,8 @@ function getCanvasSize(){
     return { w: 300, h: 300 }
   }
   return {
-    w: container.clientWidth,
-    h: container.clientHeight - 1  // 🔥 evita scroll
+    w: container.offsetWidth,
+    h: container.offsetHeight
   }
 }
 
