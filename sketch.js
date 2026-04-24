@@ -45,23 +45,14 @@ function preload(){
 
 /* 🔥 SIZE SEGURO */
 function getCanvasSize(){
-
   const container = document.getElementById("sketch-container")
-
   if(!container){
-
     return { w: 300, h: 300 }
-
   }
-
   return {
-
     w: container.clientWidth,
-
-    h: container.clientHeight // 🔥 FIX REAL
-
+    h: container.clientHeight - 1  // 🔥 evita scroll
   }
-
 }
 
 let p5Canvas // 🔥 global
