@@ -45,10 +45,10 @@ images["x3"] = loadImage("img3.png")
 
 /* 🔥 RESPONSIVE SIZE */
 function getCanvasSize(){
-  const container = document.getElementById("sketch-container")
-  const w = container.offsetWidth || window.innerWidth
-  const h = container.offsetHeight || (w * 0.5625)
-  return { w, h }
+  const container = document.getElementById("sketch-container");
+  const w = container.clientWidth;
+  const h = container.clientHeight;
+  return { w, h };
 }
 
 function setup(){
