@@ -46,17 +46,22 @@ images["x3"] = loadImage("img3.png")
 /* 🔥 RESPONSIVE SIZE */
 function getCanvasSize(){
   const container = document.getElementById("sketch-container")
-  return {
-    w: container.offsetWidth,
-    h: container.offsetHeight   // 🔥 usa altura real
+  const w = container.offsetWidth
+  const h = container.offsetHeight
+  // fallback caso altura ainda não esteja definida
+  if(h === 0){
+    return {
+      w,
+      h: w * 0.5625 // fallback temporário
+    }
   }
+  return { w, h }
 }
 
 function setup(){
 
   const { w, h } = getCanvasSize()
 
-  /* 🔥 ENABLE TRUE TRANSPARENCY */
   setAttributes('alpha', true)
 
   const canvas = createCanvas(w, h)
@@ -69,6 +74,11 @@ function setup(){
   ]
 
   noLoop()
+
+  // 🔥 força resize após layout estabilizar
+  setTimeout(() => {
+    windowResized()
+  }, 100)
 
   setTimeout(sendInitialState,300)
 }
