@@ -56,13 +56,10 @@ function setup(){
   document.body.style.overflow = "hidden";
   document.body.style.margin = "0";
   setAttributes('alpha', true);
-  const canvas = createCanvas(10, 10);
+  const { w, h } = getCanvasSize();
+  const canvas = createCanvas(w, h);
   canvas.parent("sketch-container");
-  setTimeout(() => {
-    const { w, h } = getCanvasSize();
-    resizeCanvas(w, h);
-    redraw();
-  }, 100);
+  canvas.style("display", "block");
   noLoop();
   setTimeout(sendInitialState,300);
 }
