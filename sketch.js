@@ -47,28 +47,29 @@ function preload(){
 function getCanvasSize(){
   const container = document.getElementById("sketch-container")
 
-  const w = container?.clientWidth || window.innerWidth
-  const h = container?.clientHeight || window.innerHeight
+  if(!container){
+    return { w: 300, h: 300 }
+  }
 
-  return { w, h }
+  return {
+    w: container.clientWidth,
+    h: container.clientHeight
+  }
 }
 
 function setup(){
 
-  // 🔥 remove scroll global
   document.documentElement.style.overflow = "hidden"
   document.body.style.overflow = "hidden"
   document.body.style.margin = "0"
 
   setAttributes('alpha', true)
 
-  const { w, h } = getCanvasSize()
-
-  const canvas = createCanvas(w, h)
+  // 🔥 começa pequeno (EVITA BUG DE ALTURA)
+  const canvas = createCanvas(10, 10)
   canvas.parent("sketch-container")
   canvas.style("display", "block")
 
-  // 🔥 criar layers
   layers = [
     new Layer("x1"),
     new Layer("x2"),
@@ -77,8 +78,12 @@ function setup(){
 
   noLoop()
 
-  // 🔥 render inicial (ESSENCIAL)
-  redraw()
+  // 🔥 espera o React/layout calcular altura real
+  setTimeout(() => {
+    const { w, h } = getCanvasSize()
+    resizeCanvas(w, h)
+    redraw()
+  }, 100)
 
   setTimeout(sendInitialState,300)
 }
