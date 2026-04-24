@@ -60,6 +60,11 @@ function setup(){
   const canvas = createCanvas(w, h);
   canvas.parent("sketch-container");
   canvas.style("display", "block");
+  layers = [
+    new Layer("x1"),
+    new Layer("x2"),
+    new Layer("x3")
+  ];
   noLoop();
   setTimeout(sendInitialState,300);
 }
