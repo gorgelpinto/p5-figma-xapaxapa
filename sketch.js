@@ -46,11 +46,9 @@ images["x3"] = loadImage("img3.png")
 /* 🔥 RESPONSIVE SIZE */
 function getCanvasSize(){
   const container = document.getElementById("sketch-container")
-  const width = container.offsetWidth
-
   return {
-    w: width,
-    h: width * 0.5625
+    w: container.offsetWidth,
+    h: container.offsetHeight   // 🔥 usa altura real
   }
 }
 
