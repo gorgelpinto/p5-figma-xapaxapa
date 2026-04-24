@@ -52,22 +52,19 @@ function getCanvasSize(){
 }
 
 function setup(){
-  setAttributes('alpha', true)
-  const canvas = createCanvas(10, 10)
-  canvas.parent("sketch-container")
-  // 🔥 IMPORTANTE
-  layers = [
-    new Layer("x1"),
-    new Layer("x2"),
-    new Layer("x3")
-  ]
+  document.documentElement.style.overflow = "hidden";
+  document.body.style.overflow = "hidden";
+  document.body.style.margin = "0";
+  setAttributes('alpha', true);
+  const canvas = createCanvas(10, 10);
+  canvas.parent("sketch-container");
   setTimeout(() => {
-    const { w, h } = getCanvasSize()
-    resizeCanvas(w, h)
-    redraw()
-  }, 100)
-  noLoop()
-  setTimeout(sendInitialState,300)
+    const { w, h } = getCanvasSize();
+    resizeCanvas(w, h);
+    redraw();
+  }, 100);
+  noLoop();
+  setTimeout(sendInitialState,300);
 }
 
 function draw(){
