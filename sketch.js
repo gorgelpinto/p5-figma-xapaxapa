@@ -53,7 +53,7 @@ function getCanvasSize(){
 
   return {
     w: container.clientWidth,
-    h: container.clientHeight
+    h: container.offsetHeight
   }
 }
 
@@ -63,9 +63,8 @@ function setup(){
   document.body.style.overflow = "hidden"
   document.body.style.margin = "0"
 
-  setAttributes('alpha', true)
+  setAttributes('alpha', false) // 🔥 IMPORTANTE (remove transparência base)
 
-  // 🔥 começa pequeno (EVITA BUG DE ALTURA)
   const canvas = createCanvas(10, 10)
   canvas.parent("sketch-container")
   canvas.style("display", "block")
@@ -78,19 +77,22 @@ function setup(){
 
   noLoop()
 
-  // 🔥 espera o React/layout calcular altura real
-  setTimeout(() => {
+  requestAnimationFrame(() => {
     const { w, h } = getCanvasSize()
+
     resizeCanvas(w, h)
+
+    canvas.elt.style.height = h + "px"
+
     redraw()
-  }, 100)
+  })
 
   setTimeout(sendInitialState,300)
 }
 
 function draw(){
 
-  clear()
+  background(255)
 
   order.forEach(key=>{
     const layer = layers.find(l => l.key === key)
@@ -105,6 +107,11 @@ function draw(){
 function windowResized(){
   const { w, h } = getCanvasSize()
   resizeCanvas(w, h)
+  // 🔥 ESSENCIAL
+  const canvas = document.querySelector("canvas")
+  if(canvas){
+    canvas.style.height = h + "px"
+  }
   redraw()
 }
 
