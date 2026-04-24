@@ -45,17 +45,26 @@ function preload(){
 
 /* 🔥 SIZE SEGURO */
 function getCanvasSize(){
+
   const container = document.getElementById("sketch-container")
 
   if(!container){
+
     return { w: 300, h: 300 }
+
   }
 
   return {
+
     w: container.clientWidth,
-    h: container.offsetHeight
+
+    h: container.clientHeight // 🔥 FIX REAL
+
   }
+
 }
+
+let p5Canvas // 🔥 global
 
 function setup(){
 
@@ -63,11 +72,11 @@ function setup(){
   document.body.style.overflow = "hidden"
   document.body.style.margin = "0"
 
-  setAttributes('alpha', false) // 🔥 IMPORTANTE (remove transparência base)
+  setAttributes('alpha', false)
 
-  const canvas = createCanvas(10, 10)
-  canvas.parent("sketch-container")
-  canvas.style("display", "block")
+  p5Canvas = createCanvas(10, 10)
+  p5Canvas.parent("sketch-container")
+  p5Canvas.style("display", "block")
 
   layers = [
     new Layer("x1"),
@@ -78,17 +87,26 @@ function setup(){
   noLoop()
 
   requestAnimationFrame(() => {
-    const { w, h } = getCanvasSize()
 
-    resizeCanvas(w, h)
+    const applySize = () => {
+      const { w, h } = getCanvasSize()
 
-    canvas.elt.style.height = h + "px"
+      resizeCanvas(w, h)
 
-    redraw()
+      p5Canvas.elt.style.width = w + "px"
+      p5Canvas.elt.style.height = h + "px"
+
+      redraw()
+    }
+
+    applySize()
+    setTimeout(applySize, 50)
+
   })
 
   setTimeout(sendInitialState,300)
-}
+
+} // 🔥 FECHO CORRETO
 
 function draw(){
 
@@ -106,12 +124,14 @@ function draw(){
 /* 🔥 RESIZE REAL */
 function windowResized(){
   const { w, h } = getCanvasSize()
+
   resizeCanvas(w, h)
-  // 🔥 ESSENCIAL
-  const canvas = document.querySelector("canvas")
-  if(canvas){
-    canvas.style.height = h + "px"
+
+  if(p5Canvas){
+    p5Canvas.elt.style.width = w + "px"
+    p5Canvas.elt.style.height = h + "px"
   }
+
   redraw()
 }
 
