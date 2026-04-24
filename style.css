@@ -5,6 +5,7 @@ html, body {
   background: transparent; /* 🔥 REMOVE branco */
   font-family: monospace; /* opcional */
   color: #111;
+  height:100%;
 }
 
 /* 🔥 IMPORTANTE: remove comportamento inline do canvas */
