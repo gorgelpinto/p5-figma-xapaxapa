@@ -45,17 +45,15 @@ images["x3"] = loadImage("img3.png")
 
 /* 🔥 RESPONSIVE SIZE */
 function getCanvasSize(){
-  const container = document.getElementById("sketch-container")
-  const w = container.offsetWidth
-  const h = container.offsetHeight
-  // fallback caso altura ainda não esteja definida
-  if(h === 0){
-    return {
-      w,
-      h: w * 0.5625 // fallback temporário
-    }
+
+  return {
+
+    w: window.innerWidth,
+
+    h: window.innerHeight
+
   }
-  return { w, h }
+
 }
 
 function setup(){
@@ -65,7 +63,9 @@ function setup(){
   setAttributes('alpha', true)
 
   const canvas = createCanvas(w, h)
-  canvas.parent("sketch-container")
+
+  // 🔥 NÃO uses parent
+  // canvas.parent("sketch-container")
 
   layers = [
     new Layer("x1"),
@@ -74,11 +74,6 @@ function setup(){
   ]
 
   noLoop()
-
-  // 🔥 força resize após layout estabilizar
-  setTimeout(() => {
-    windowResized()
-  }, 100)
 
   setTimeout(sendInitialState,300)
 }
@@ -97,9 +92,11 @@ function draw(){
 
 /* 🔥 RESIZE */
 function windowResized(){
-  const { w, h } = getCanvasSize()
-  resizeCanvas(w, h)
+
+  resizeCanvas(window.innerWidth, window.innerHeight)
+
   redraw()
+
 }
 
 function sendInitialState(){
