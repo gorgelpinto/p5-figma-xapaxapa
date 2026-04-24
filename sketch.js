@@ -46,33 +46,32 @@ images["x3"] = loadImage("img3.png")
 /* 🔥 RESPONSIVE SIZE */
 function getCanvasSize(){
   const container = document.getElementById("sketch-container")
-  return {
-    w: container.offsetWidth,
-    h: container.offsetHeight
-  }
+  const w = container.offsetWidth || window.innerWidth
+  const h = container.offsetHeight || (w * 0.5625)
+  return { w, h }
 }
 
 function setup(){
-  const { w, h } = getCanvasSize()
   setAttributes('alpha', true)
-  const canvas = createCanvas(w, h)
+  const canvas = createCanvas(10, 10)
   canvas.parent("sketch-container")
-
+  // 🔥 IMPORTANTE
   layers = [
     new Layer("x1"),
     new Layer("x2"),
     new Layer("x3")
   ]
-
+  setTimeout(() => {
+    const { w, h } = getCanvasSize()
+    resizeCanvas(w, h)
+    redraw()
+  }, 100)
   noLoop()
-
   setTimeout(sendInitialState,300)
 }
 
 function draw(){
-
   clear() // 🔥 real transparency
-
   order.forEach(key=>{
     const layer = layers.find(l => l.key === key)
     if(!layer) return
